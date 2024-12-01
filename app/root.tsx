@@ -8,6 +8,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { Header } from "./components/Header/Header";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,7 +21,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>{children}</MantineProvider>
+        <MantineProvider>
+          <Header />
+          {children}
+        </MantineProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
