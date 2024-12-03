@@ -13,6 +13,31 @@
   align-items: center;
 }
 
+.user {
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-dark-0));
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  transition: background-color 100ms ease;
+
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-white),
+      var(--mantine-color-dark-8)
+    );
+  }
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    display: none;
+  }
+}
+
+.userActive {
+  background-color: light-dark(
+    var(--mantine-color-white),
+    var(--mantine-color-dark-8)
+  );
+}
+
 .link {
   display: block;
   line-height: 1;
@@ -34,4 +59,9 @@
     background-color: var(--mantine-color-blue-filled);
     color: var(--mantine-color-white);
   }
+}
+
+.menuItem {
+  color: inherit;
+  text-decoration: none;
 }
