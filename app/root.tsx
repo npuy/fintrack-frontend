@@ -9,8 +9,14 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import { Header } from "./components/Header/Header";
+import { ActionFunctionArgs } from "@remix-run/node";
+import { userLoggedIn } from "./services/authentication/middleware";
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export const loader = async ({ request }: ActionFunctionArgs) => {
+  return await userLoggedIn({ request } as ActionFunctionArgs);
+};
+
+export default function App() {
   return (
     <html lang="en">
       <head>
@@ -23,15 +29,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <MantineProvider>
           <Header />
-          {children}
+          <Outlet />
         </MantineProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
   );
-}
-
-export default function App() {
-  return <Outlet />;
 }

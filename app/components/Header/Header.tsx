@@ -1,37 +1,21 @@
-import { useState } from "react";
-import {
-  Avatar,
-  Burger,
-  Container,
-  Group,
-  Menu,
-  Text,
-  UnstyledButton,
-} from "@mantine/core";
+import { Burger, Container, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown, IconLogout, IconSettings } from "@tabler/icons-react";
-import cx from "clsx";
 import { MantineLogo } from "@mantinex/mantine-logo";
 import classes from "./Header.module.css";
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
+import { UserMenu } from "../UserMenu/UserMenu";
 
-const homeLink = { link: "/", label: "Mantine" };
+const homeLink = { link: "/", label: "Home" };
+
 const links = [
   { link: "/accounts", label: "Accounts" },
   { link: "/categories", label: "Categories" },
   { link: "/transactions", label: "Transactions" },
 ];
 
-const user = {
-  name: "Jane Spoonfighter",
-  email: "janspoon@fighter.dev",
-  image:
-    "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png",
-};
-
 export function Header() {
+  const userLoggedIn = useLoaderData();
   const [opened, { toggle }] = useDisclosure(false);
-  const [userMenuOpened, setUserMenuOpened] = useState(false);
 
   const items = links.map((link) => (
     <Link key={link.label} to={link.link} className={classes.link}>
@@ -46,46 +30,21 @@ export function Header() {
           <MantineLogo size={28} />
         </Link>
         <Group gap={5} visibleFrom="xs">
-          {items}
-          <Menu
-            width={260}
-            position="bottom-end"
-            transitionProps={{ transition: "pop-top-right" }}
-            onClose={() => setUserMenuOpened(false)}
-            onOpen={() => setUserMenuOpened(true)}
-            withinPortal
-          >
-            <Menu.Target>
-              <UnstyledButton
-                className={cx(classes.user, {
-                  [classes.userActive]: userMenuOpened,
-                })}
-              >
-                <Group gap={7}>
-                  <Avatar
-                    src={user.image}
-                    alt={user.email}
-                    radius="xl"
-                    size={20}
-                  />
-                  <Text fw={500} size="sm" lh={1} mr={3}>
-                    {user.name}
-                  </Text>
-                  <IconChevronDown size={12} stroke={1.5} />
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item leftSection={<IconSettings size={16} stroke={1.5} />}>
-                Account settings
-              </Menu.Item>
-              <Menu.Item leftSection={<IconLogout size={16} stroke={1.5} />}>
-                <Link to="/logout" className={classes.menuItem}>
-                  Logout
-                </Link>
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+          {userLoggedIn ? (
+            <>
+              {items}
+              <UserMenu />
+            </>
+          ) : (
+            <>
+              <Link key={"Register"} to={"/register"} className={classes.link}>
+                Register
+              </Link>
+              <Link key={"Login"} to={"/login"} className={classes.loginLink}>
+                Login
+              </Link>
+            </>
+          )}
         </Group>
 
         <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />

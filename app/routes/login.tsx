@@ -5,6 +5,8 @@ import type {
 } from "@remix-run/node";
 import { Form, redirect } from "@remix-run/react";
 import { getSession, commitSession } from "../sessions";
+import { Button, Container, Flex, Space, TextInput } from "@mantine/core";
+import { userLoggedIn } from "~/services/authentication/middleware";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Login" }];
@@ -55,8 +57,7 @@ export const action: ActionFunction = async ({
 };
 
 export const loader = async ({ request }: ActionFunctionArgs) => {
-  const session = await getSession(request.headers.get("Cookie"));
-  if (session.has("userId")) {
+  if (await userLoggedIn({ request } as ActionFunctionArgs)) {
     return redirect("/");
   }
   return {};
@@ -64,19 +65,18 @@ export const loader = async ({ request }: ActionFunctionArgs) => {
 
 export default function Login() {
   return (
-    <div>
+    <Container size="xs">
       <h1>Login</h1>
       <Form method="post">
-        <label>
-          Email
-          <input type="email" name="email" required />
-        </label>
-        <label>
-          Password
-          <input type="password" name="password" required />
-        </label>
-        <button type="submit">Login</button>
+        <TextInput label="Email" name="email" required />
+        <TextInput label="Password" name="password" type="password" required />
+        <Space h="md" />
+        <Flex justify="flex-end">
+          <Button variant="filled" type="submit">
+            Login
+          </Button>
+        </Flex>
       </Form>
-    </div>
+    </Container>
   );
 }

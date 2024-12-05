@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import { MetaFunction } from "@remix-run/node";
 import { Welcome } from "~/components/Welcome/Welcome";
 import { ColorSchemeToggle } from "~/components/ColorSchemeToggle/ColorSchemeToggle";
 
