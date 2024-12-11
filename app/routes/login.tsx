@@ -7,16 +7,11 @@ import { Form, redirect } from "@remix-run/react";
 import { getSession, commitSession } from "../sessions";
 import { Button, Container, Flex, Space, TextInput } from "@mantine/core";
 import { userLoggedIn } from "~/services/authentication/middleware";
+import type { User } from "~/types/user";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Login" }];
 };
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
 
 export const action: ActionFunction = async ({
   request,
@@ -37,8 +32,23 @@ export const action: ActionFunction = async ({
   });
 
   if (response.ok) {
+    const authToken = response.headers.get("Authorization");
+    if (!authToken) {
+      return redirect("/login");
+    }
     const user: User = await response.json();
-    session.set("userId", user.id);
+    session.set("user", user);
+    session.set("authToken", authToken);
+
+    // Remove this block when the API is ready
+    fetch("http://localhost:8000/health_check", {
+      method: "GET",
+      headers: {
+        Authorization: authToken,
+      },
+    });
+    // --------------------------------------------
+
     return redirect("/", {
       headers: {
         "Set-Cookie": await commitSession(session),
