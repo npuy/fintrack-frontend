@@ -1,8 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
-
-export const meta: MetaFunction = () => {
+export function meta() {
   return [{ title: "Transaction" }];
-};
+}
 
 export default function Transaction() {
   return (

@@ -1,8 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
-
-export const meta: MetaFunction = () => {
+export function meta() {
   return [{ title: "Category" }];
-};
+}
 
 export default function Category() {
   return (

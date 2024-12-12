@@ -1,77 +1,50 @@
-import type {
-  MetaFunction,
-  ActionFunction,
-  ActionFunctionArgs,
-} from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
 import { Form, redirect } from "@remix-run/react";
 import { getSession, commitSession } from "../sessions";
 import { Button, Container, Flex, Space, TextInput } from "@mantine/core";
 import { userLoggedIn } from "~/services/authentication/middleware";
-import type { User } from "~/types/user";
+import {
+  loginInBackend,
+  validateLoginData,
+} from "~/services/authentication/auth";
 
-export const meta: MetaFunction = () => {
+export function meta() {
   return [{ title: "Login" }];
-};
+}
 
-export const action: ActionFunction = async ({
-  request,
-}: ActionFunctionArgs) => {
-  const session = await getSession(request.headers.get("Cookie"));
+export async function action({ request }: ActionFunctionArgs) {
+  try {
+    const formData = await request.formData();
 
-  // TODO: Add validation and error handling
-  const formData = await request.formData();
-  const response = await fetch("http://localhost:8000/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email: formData.get("email"),
-      password: formData.get("password"),
-    }),
-  });
+    const { email, password } = validateLoginData(
+      formData.get("email"),
+      formData.get("password")
+    );
 
-  if (response.ok) {
-    const authToken = response.headers.get("Authorization");
-    if (!authToken) {
-      return redirect("/login");
-    }
-    const user: User = await response.json();
-    session.set("user", user);
-    session.set("authToken", authToken);
+    const sessionData = await loginInBackend(email, password);
 
-    // Remove this block when the API is ready
-    fetch("http://localhost:8000/health_check", {
-      method: "GET",
-      headers: {
-        Authorization: authToken,
-      },
-    });
-    // --------------------------------------------
+    const session = await getSession(request.headers.get("Cookie"));
+
+    session.set("user", sessionData.user);
+    session.set("authToken", sessionData.authToken);
 
     return redirect("/", {
       headers: {
         "Set-Cookie": await commitSession(session),
       },
     });
+  } catch (error) {
+    console.error(error);
+    return redirect("/login");
   }
+}
 
-  // If the response is not ok, redirect to the login page
-  // TODO: Add error handling
-  console.log(
-    "Error logging in: ",
-    response.status,
-    (await response.json()).message
-  );
-  return redirect("/login");
-};
-
-export const loader = async ({ request }: ActionFunctionArgs) => {
+export async function loader({ request }: ActionFunctionArgs) {
   if (await userLoggedIn({ request } as ActionFunctionArgs)) {
     return redirect("/");
   }
   return {};
-};
+}
 
 export default function Login() {
   return (
