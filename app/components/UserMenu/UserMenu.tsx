@@ -2,17 +2,12 @@ import { Avatar, Group, Menu, UnstyledButton, Text } from "@mantine/core";
 import { IconChevronDown, IconLogout, IconSettings } from "@tabler/icons-react";
 import classes from "./UserMenu.module.css";
 import { useState } from "react";
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import cx from "clsx";
-
-const user = {
-  name: "Jane Spoonfighter",
-  email: "janspoon@fighter.dev",
-  image:
-    "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png",
-};
+import { User } from "~/types/user";
 
 export function UserMenu() {
+  const { user } = useLoaderData() as { user: User };
   const [userMenuOpened, setUserMenuOpened] = useState(false);
 
   return (
@@ -31,7 +26,15 @@ export function UserMenu() {
           })}
         >
           <Group gap={7}>
-            <Avatar src={user.image} alt={user.email} radius="xl" size={20} />
+            <Avatar
+              src={
+                user.image ||
+                "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png"
+              }
+              alt={user.email}
+              radius="xl"
+              size={20}
+            />
             <Text fw={500} size="sm" lh={1} mr={3}>
               {user.name}
             </Text>

@@ -4,6 +4,7 @@ import { MantineLogo } from "@mantinex/mantine-logo";
 import classes from "./Header.module.css";
 import { Link, useLoaderData } from "@remix-run/react";
 import { UserMenu } from "../UserMenu/UserMenu";
+import { User } from "~/types/user";
 
 const homeLink = { link: "/", label: "Home" };
 
@@ -14,7 +15,7 @@ const links = [
 ];
 
 export function Header() {
-  const userLoggedIn = useLoaderData();
+  const { user } = useLoaderData() as { user: User };
   const [opened, { toggle }] = useDisclosure(false);
 
   const items = links.map((link) => (
@@ -30,7 +31,7 @@ export function Header() {
           <MantineLogo size={28} />
         </Link>
         <Group gap={5} visibleFrom="xs">
-          {userLoggedIn ? (
+          {user ? (
             <>
               {items}
               <UserMenu />

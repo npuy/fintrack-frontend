@@ -32,7 +32,8 @@ export async function loginInBackend(
 
 export async function registerInBackend(
   email: string,
-  password: string
+  password: string,
+  name: string
 ): Promise<SessionDataType> {
   const response = await fetch("http://localhost:8000/auth/register", {
     method: "POST",
@@ -42,6 +43,7 @@ export async function registerInBackend(
     body: JSON.stringify({
       email,
       password,
+      name,
     }),
   });
 

@@ -10,10 +10,11 @@ import {
 } from "@remix-run/react";
 import { Header } from "./components/Header/Header";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { userLoggedIn } from "./services/authentication/middleware";
+import { getUser } from "./services/authentication/middleware";
 
 export const loader = async ({ request }: ActionFunctionArgs) => {
-  return await userLoggedIn({ request } as ActionFunctionArgs);
+  const user = await getUser({ request } as ActionFunctionArgs);
+  return { user };
 };
 
 export default function App() {
