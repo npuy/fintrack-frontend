@@ -1,5 +1,6 @@
 import { Button, Container, Space, Table, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { IconEdit } from "@tabler/icons-react";
 import { userLoggedIn } from "~/services/authentication/middleware";
 
 export function meta() {
@@ -23,7 +24,11 @@ export default function Accounts() {
   const rows = elements.map((element) => (
     <Table.Tr key={element.name}>
       <Table.Td>
-        <Button component="a" href={"/accounts/" + element.id}>
+        <Button
+          component="a"
+          href={"/accounts/" + element.id}
+          leftSection={<IconEdit size={16} />}
+        >
           Edit
         </Button>
       </Table.Td>
