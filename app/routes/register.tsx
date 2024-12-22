@@ -8,6 +8,7 @@ import {
   Flex,
   Space,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { userLoggedIn } from "~/services/authentication/middleware";
 import {
@@ -58,7 +59,9 @@ export default function Register() {
   return (
     <Container size="xs">
       <Fieldset>
-        <h1>Register</h1>
+        <Space h="md" />
+        <Title order={1}>Register</Title>
+        <Space h="md" />
         <Form method="post">
           <TextInput label="Name" name="name" type="text" required />
           <TextInput label="Email" name="email" type="email" required />

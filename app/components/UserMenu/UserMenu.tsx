@@ -28,8 +28,7 @@ export function UserMenu() {
           <Group gap={7}>
             <Avatar
               src={
-                user.image ||
-                "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png"
+                user.image || "https://ui-avatars.com/api/?name=" + user.name
               }
               alt={user.email}
               radius="xl"
