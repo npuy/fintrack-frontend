@@ -1,6 +1,7 @@
-import { Button, Container, Space, Table, Title } from "@mantine/core";
+import { Button, Container, Flex, Space, Table, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { IconEdit } from "@tabler/icons-react";
+import NewButton from "~/components/Buttons/NewButton";
 import { userLoggedIn } from "~/services/authentication/middleware";
 
 export function meta() {
@@ -41,6 +42,10 @@ export default function Accounts() {
     <Container size="md">
       <Space h="md" />
       <Title order={1}>Accounts</Title>
+      <Space h="md" />
+      <Flex justify="flex-end">
+        <NewButton link="/accounts/new">Account</NewButton>
+      </Flex>
       <Space h="md" />
       <Table>
         <Table.Thead>

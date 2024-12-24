@@ -3,7 +3,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { MantineLogo } from "@mantinex/mantine-logo";
 import classes from "./Header.module.css";
 import { Link, useLoaderData } from "@remix-run/react";
-import { UserMenu } from "../UserMenu/UserMenu";
+import { UserMenu } from "./UserMenu/UserMenu";
 import { User } from "~/types/user";
 
 const homeLink = { link: "/", label: "Home" };

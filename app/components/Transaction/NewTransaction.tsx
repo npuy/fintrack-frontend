@@ -9,12 +9,12 @@ import {
 import { Form } from "@remix-run/react";
 import CreateButton from "../Buttons/CreateButton";
 
-export default function NewAccount() {
+export default function NewTransaction() {
   return (
     <Container size="xs">
       <Fieldset>
         <Space h="md" />
-        <Title order={1}>New Account</Title>
+        <Title order={1}>New Transaction</Title>
         <Space h="md" />
         <Form method="post">
           <TextInput label="Name" name="name" required />

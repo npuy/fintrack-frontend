@@ -12,7 +12,7 @@ const { getSession, commitSession, destroySession } =
     cookie: {
       name: "__session",
       httpOnly: true,
-      maxAge: 60 * 30,
+      maxAge: 60 * 60 * 24 * 7,
       path: "/",
       sameSite: "lax",
       secrets: ["s3cret1"],

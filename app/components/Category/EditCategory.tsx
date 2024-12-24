@@ -8,19 +8,19 @@ import {
 } from "@mantine/core";
 import { Form, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
-import { loader } from "~/routes/accounts.$accountId";
-import EditButton from "../Buttons/EditButton";
+import { loader } from "~/routes/categories.$categoryId";
 import DeleteButton from "../Buttons/DeleteButton";
+import EditButton from "../Buttons/EditButton";
 
-export default function EditAccount() {
+export default function EditCategory() {
   const data = useLoaderData<typeof loader>();
-  const [value, setValue] = useState(data.account.name);
+  const [value, setValue] = useState(data.category.name);
 
   return (
     <Container size="xs">
       <Fieldset>
         <Space h="md" />
-        <Title order={1}>Edit Account</Title>
+        <Title order={1}>Edit Category</Title>
         <Space h="md" />
         <Form method="post">
           <TextInput
