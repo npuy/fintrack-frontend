@@ -15,3 +15,10 @@ export async function getUser({
   const session = await getSession(request.headers.get("Cookie"));
   return session.get("user");
 }
+
+export async function getToken({
+  request,
+}: ActionFunctionArgs): Promise<string | undefined> {
+  const session = await getSession(request.headers.get("Cookie"));
+  return session.get("authToken");
+}

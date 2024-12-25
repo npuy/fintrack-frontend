@@ -1,27 +1,28 @@
 import { Button, Container, Flex, Space, Table, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
 import NewButton from "~/components/Buttons/NewButton";
+import { getAccountsWithBalance } from "~/services/account/account";
 import { userLoggedIn } from "~/services/authentication/middleware";
 
 export function meta() {
   return [{ title: "Accounts" }];
 }
 
-const elements = [
-  { name: "Cuenta dolares", id: "1", balance: 1000 },
-  { name: "Cuenta pesos", id: "2", balance: 1000 },
-  { name: "Efectivo", id: "3", balance: 1000 },
-];
-
 export async function loader({ request }: ActionFunctionArgs) {
   if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
     return redirect("/");
   }
-  return {};
+  const accounts = await getAccountsWithBalance({
+    request,
+  } as ActionFunctionArgs);
+  return { accounts };
 }
 
 export default function Accounts() {
+  const data = useLoaderData<typeof loader>();
+  const elements = data.accounts;
   const rows = elements.map((element) => (
     <Table.Tr key={element.name}>
       <Table.Td>

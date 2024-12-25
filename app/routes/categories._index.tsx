@@ -1,27 +1,28 @@
 import { Button, Container, Flex, Space, Table, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
 import NewButton from "~/components/Buttons/NewButton";
 import { userLoggedIn } from "~/services/authentication/middleware";
+import { getCategoriesWithBalance } from "~/services/category/category";
 
 export function meta() {
   return [{ title: "Categories" }];
 }
 
-const elements = [
-  { name: "Comida", id: "1", balance: 1000 },
-  { name: "Gastos for fun", id: "2", balance: 1000 },
-  { name: "Nafta", id: "3", balance: 1000 },
-];
-
 export async function loader({ request }: ActionFunctionArgs) {
   if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
     return redirect("/");
   }
-  return {};
+  const categories = await getCategoriesWithBalance({
+    request,
+  } as ActionFunctionArgs);
+  return { categories };
 }
 
 export default function Accounts() {
+  const data = useLoaderData<typeof loader>();
+  const elements = data.categories;
   const rows = elements.map((element) => (
     <Table.Tr key={element.name}>
       <Table.Td>
