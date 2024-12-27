@@ -6,7 +6,7 @@ export default function DeleteButton() {
     <Button
       variant="default"
       leftSection={<IconTrash size={16} />}
-      type="button"
+      type="submit"
     >
       Delete
     </Button>
