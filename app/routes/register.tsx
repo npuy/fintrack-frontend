@@ -6,6 +6,7 @@ import {
   Container,
   Fieldset,
   Flex,
+  PasswordInput,
   Space,
   TextInput,
   Title,
@@ -65,12 +66,7 @@ export default function Register() {
         <Form method="post">
           <TextInput label="Name" name="name" type="text" required />
           <TextInput label="Email" name="email" type="email" required />
-          <TextInput
-            label="Password"
-            name="password"
-            type="password"
-            required
-          />
+          <PasswordInput label="Password" name="password" required />
           <Space h="md" />
           <Flex justify="flex-end">
             <Button variant="filled" type="submit">

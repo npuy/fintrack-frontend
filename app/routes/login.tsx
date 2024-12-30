@@ -6,6 +6,7 @@ import {
   Container,
   Fieldset,
   Flex,
+  PasswordInput,
   Space,
   TextInput,
   Title,
@@ -63,12 +64,7 @@ export default function Login() {
         <Space h="md" />
         <Form method="post">
           <TextInput label="Email" name="email" required />
-          <TextInput
-            label="Password"
-            name="password"
-            type="password"
-            required
-          />
+          <PasswordInput label="Password" name="password" required />
           <Space h="md" />
           <Flex justify="flex-end">
             <Button variant="filled" type="submit">
