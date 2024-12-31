@@ -15,6 +15,19 @@ export async function getCategoriesWithBalance({
   return (await response.json()) as CategoryWithBalance[];
 }
 
+export async function getCategories({
+  request,
+}: ActionFunctionArgs): Promise<Category[]> {
+  const response = await fetch("http://localhost:8000/category", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+    },
+  });
+  return (await response.json()) as CategoryWithBalance[];
+}
+
 export async function getCategory({
   request,
   categoryId,
@@ -31,7 +44,6 @@ export async function getCategory({
 
 export function validateCategoryData(name: FormDataEntryValue | null) {
   if (!name || typeof name !== "string") {
-    console.log(name);
     throw new Error("Invalid category data");
   }
   return { name: name as string };

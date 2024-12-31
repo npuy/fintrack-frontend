@@ -16,3 +16,13 @@ export interface Transaction {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface TransactionCreate {
+  id?: string;
+  amount: number;
+  description: string;
+  date: Date;
+  accountId: string;
+  categoryId: string;
+  type: TransactionType;
+}

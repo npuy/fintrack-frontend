@@ -15,6 +15,19 @@ export async function getAccountsWithBalance({
   return (await response.json()) as AccountWithBalance[];
 }
 
+export async function getAccounts({
+  request,
+}: ActionFunctionArgs): Promise<Account[]> {
+  const response = await fetch("http://localhost:8000/account", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+    },
+  });
+  return (await response.json()) as Account[];
+}
+
 export async function getAccount({
   request,
   accountId,
@@ -31,7 +44,6 @@ export async function getAccount({
 
 export function validateAccountData(name: FormDataEntryValue | null) {
   if (!name || typeof name !== "string") {
-    console.log(name);
     throw new Error("Invalid account data");
   }
   return { name: name as string };
