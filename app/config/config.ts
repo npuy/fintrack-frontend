@@ -9,8 +9,8 @@ const envSchema = z.object({
 
 const envParsed = envSchema.safeParse({
   PORT: process.env.PORT,
-  DATABASE_URL: process.env.DATABASE_URL,
-  JWT_SECRET: process.env.JWT_SECRET,
+  SESSION_SECRET: process.env.SESSION_SECRET,
+  BACKEND_URL: process.env.BACKEND_URL,
 });
 
 if (!envParsed.success) {
