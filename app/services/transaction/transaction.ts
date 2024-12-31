@@ -1,11 +1,12 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { Transaction, TransactionCreate } from "~/types/transaction";
 import { getToken } from "../authentication/middleware";
+import { env } from "~/config/config";
 
 export async function getTransactions({
   request,
 }: ActionFunctionArgs): Promise<Transaction[]> {
-  const response = await fetch("http://localhost:8000/transaction", {
+  const response = await fetch(`${env.BACKEND_URL}/transaction`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
@@ -19,7 +20,7 @@ export async function getTransaction({
   transactionId,
 }: ActionFunctionArgs & { transactionId: string }): Promise<Transaction> {
   const response = await fetch(
-    `http://localhost:8000/transaction/${transactionId}`,
+    `${env.BACKEND_URL}/transaction/${transactionId}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -72,7 +73,7 @@ export async function createTransaction({
   request,
   transactionData,
 }: ActionFunctionArgs & { transactionData: TransactionCreate }) {
-  await fetch("http://localhost:8000/transaction", {
+  await fetch(`${env.BACKEND_URL}/transaction`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -86,7 +87,7 @@ export async function updateTransaction({
   request,
   transactionData,
 }: ActionFunctionArgs & { transactionData: TransactionCreate }) {
-  await fetch(`http://localhost:8000/transaction/${transactionData.id}`, {
+  await fetch(`${env.BACKEND_URL}/transaction/${transactionData.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -100,7 +101,7 @@ export async function deleteTransaction({
   request,
   transactionId,
 }: ActionFunctionArgs & { transactionId: string }) {
-  await fetch(`http://localhost:8000/transaction/${transactionId}`, {
+  await fetch(`${env.BACKEND_URL}/transaction/${transactionId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

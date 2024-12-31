@@ -1,11 +1,12 @@
 import { Account, AccountWithBalance } from "~/types/account";
 import { getToken } from "~/services/authentication/middleware";
 import { ActionFunctionArgs } from "@remix-run/node";
+import { env } from "~/config/config";
 
 export async function getAccountsWithBalance({
   request,
 }: ActionFunctionArgs): Promise<AccountWithBalance[]> {
-  const response = await fetch("http://localhost:8000/account/balance", {
+  const response = await fetch(`${env.BACKEND_URL}/account/balance`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -18,7 +19,7 @@ export async function getAccountsWithBalance({
 export async function getAccounts({
   request,
 }: ActionFunctionArgs): Promise<Account[]> {
-  const response = await fetch("http://localhost:8000/account", {
+  const response = await fetch(`${env.BACKEND_URL}/account`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -32,7 +33,7 @@ export async function getAccount({
   request,
   accountId,
 }: ActionFunctionArgs & { accountId: string }): Promise<Account> {
-  const response = await fetch(`http://localhost:8000/account/${accountId}`, {
+  const response = await fetch(`${env.BACKEND_URL}/account/${accountId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -53,7 +54,7 @@ export async function createAccount({
   request,
   name,
 }: ActionFunctionArgs & { name: string }) {
-  await fetch("http://localhost:8000/account", {
+  await fetch(`${env.BACKEND_URL}/account`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -71,7 +72,7 @@ export async function editAccount({
   name: string;
   accountId: string;
 }) {
-  await fetch(`http://localhost:8000/account/${accountId}`, {
+  await fetch(`${env.BACKEND_URL}/account/${accountId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -85,7 +86,7 @@ export async function deleteAccount({
   request,
   accountId,
 }: ActionFunctionArgs & { accountId: string }) {
-  await fetch(`http://localhost:8000/account/${accountId}`, {
+  await fetch(`${env.BACKEND_URL}/account/${accountId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

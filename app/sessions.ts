@@ -1,5 +1,6 @@
 import { createCookieSessionStorage } from "@remix-run/node";
 import type { SessionDataType } from "~/types/session";
+import { env } from "~/config/config";
 
 type SessionData = SessionDataType;
 
@@ -15,7 +16,7 @@ const { getSession, commitSession, destroySession } =
       maxAge: 60 * 60,
       path: "/",
       sameSite: "lax",
-      secrets: ["s3cret1"],
+      secrets: [env.SESSION_SECRET],
       secure: true,
     },
   });

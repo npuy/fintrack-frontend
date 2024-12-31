@@ -1,11 +1,12 @@
 import { getToken } from "~/services/authentication/middleware";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { Category, CategoryWithBalance } from "~/types/category";
+import { env } from "~/config/config";
 
 export async function getCategoriesWithBalance({
   request,
 }: ActionFunctionArgs): Promise<CategoryWithBalance[]> {
-  const response = await fetch("http://localhost:8000/category/balance", {
+  const response = await fetch(`${env.BACKEND_URL}/category/balance`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -18,7 +19,7 @@ export async function getCategoriesWithBalance({
 export async function getCategories({
   request,
 }: ActionFunctionArgs): Promise<Category[]> {
-  const response = await fetch("http://localhost:8000/category", {
+  const response = await fetch(`${env.BACKEND_URL}/category`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -32,7 +33,7 @@ export async function getCategory({
   request,
   categoryId,
 }: ActionFunctionArgs & { categoryId: string }): Promise<Category> {
-  const response = await fetch(`http://localhost:8000/category/${categoryId}`, {
+  const response = await fetch(`${env.BACKEND_URL}/category/${categoryId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -53,7 +54,7 @@ export async function createCategory({
   request,
   name,
 }: ActionFunctionArgs & { name: string }) {
-  await fetch("http://localhost:8000/category", {
+  await fetch(`${env.BACKEND_URL}/category`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -71,7 +72,7 @@ export async function editCategory({
   name: string;
   categoryId: string;
 }) {
-  await fetch(`http://localhost:8000/category/${categoryId}`, {
+  await fetch(`${env.BACKEND_URL}/category/${categoryId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -85,7 +86,7 @@ export async function deleteCategory({
   request,
   categoryId,
 }: ActionFunctionArgs & { categoryId: string }) {
-  await fetch(`http://localhost:8000/category/${categoryId}`, {
+  await fetch(`${env.BACKEND_URL}/category/${categoryId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
