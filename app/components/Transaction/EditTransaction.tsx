@@ -97,7 +97,9 @@ export default function EditTransaction() {
           />
           <Space h="md" />
           <Flex justify="flex-end">
-            <DeleteButton />
+            <Form method="post" action="delete">
+              <DeleteButton />
+            </Form>
             <Space w="md" />
             <EditButton />
           </Flex>

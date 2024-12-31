@@ -95,3 +95,16 @@ export async function updateTransaction({
     body: JSON.stringify(transactionData),
   });
 }
+
+export async function deleteTransaction({
+  request,
+  transactionId,
+}: ActionFunctionArgs & { transactionId: string }) {
+  await fetch(`http://localhost:8000/transaction/${transactionId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+    },
+  });
+}
