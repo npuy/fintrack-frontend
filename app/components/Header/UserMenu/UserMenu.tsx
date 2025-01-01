@@ -42,9 +42,9 @@ export function UserMenu() {
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
-        <Menu.Item leftSection={<IconSettings size={16} stroke={1.5} />}>
+        {/* <Menu.Item leftSection={<IconSettings size={16} stroke={1.5} />}>
           Account settings
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item
           leftSection={<IconLogout size={16} stroke={1.5} />}
           component={Link}

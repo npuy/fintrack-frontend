@@ -1,5 +1,4 @@
 import { Welcome } from "~/components/Welcome/Welcome";
-import { ColorSchemeToggle } from "~/components/ColorSchemeToggle/ColorSchemeToggle";
 
 export function meta() {
   return [
@@ -12,7 +11,6 @@ export default function Index() {
   return (
     <>
       <Welcome />
-      <ColorSchemeToggle />
     </>
   );
 }

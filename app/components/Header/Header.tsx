@@ -1,10 +1,9 @@
-import { Burger, Container, Group } from "@mantine/core";
+import { Burger, Container, Group, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { MantineLogo } from "@mantinex/mantine-logo";
 import classes from "./Header.module.css";
 import { Link, useLoaderData } from "@remix-run/react";
 import { UserMenu } from "./UserMenu/UserMenu";
-import { User } from "~/types/user";
+import { loader } from "~/root";
 
 const homeLink = { link: "/", label: "Home" };
 
@@ -15,7 +14,7 @@ const links = [
 ];
 
 export function Header() {
-  const { user } = useLoaderData() as { user: User };
+  const { user } = useLoaderData<typeof loader>();
   const [opened, { toggle }] = useDisclosure(false);
 
   const items = links.map((link) => (
@@ -27,8 +26,21 @@ export function Header() {
   return (
     <header className={classes.header}>
       <Container size="md" className={classes.inner}>
-        <Link key={homeLink.label} to={homeLink.link}>
-          <MantineLogo size={28} />
+        <Link
+          key={homeLink.label}
+          to={homeLink.link}
+          className={classes.menuItem}
+        >
+          <Title className={classes.title} ta="center">
+            <Text
+              inherit
+              variant="gradient"
+              component="span"
+              gradient={{ from: "pink", to: "yellow" }}
+            >
+              FinTrack
+            </Text>
+          </Title>
         </Link>
         <Group gap={5} visibleFrom="xs">
           {user ? (

@@ -1,4 +1,4 @@
-import { Title, Text, Anchor } from "@mantine/core";
+import { Title, Text } from "@mantine/core";
 import classes from "./Welcome.module.css";
 
 export function Welcome() {
@@ -12,17 +12,18 @@ export function Welcome() {
           component="span"
           gradient={{ from: "pink", to: "yellow" }}
         >
-          Mantine
+          FinTrack
         </Text>
       </Title>
       <Text color="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
-        This starter Remix project includes a minimal setup for server side
-        rendering, if you want to learn more on Mantine + Remix integration
-        follow{" "}
+        Track your expenses effortlessly, gain insights into your spending
+        habits, and plan for the future. FinTrack makes managing your money
+        simple, smart, and stress-free.
+        {/* {" "}
         <Anchor href="https://mantine.dev/guides/remix/" size="lg">
           this guide
         </Anchor>
-        . To get started edit index.tsx file.
+        . To get started edit index.tsx file. */}
       </Text>
     </>
   );

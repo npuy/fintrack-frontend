@@ -28,7 +28,7 @@ export default function App() {
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>
+        <MantineProvider defaultColorScheme="dark">
           <Header />
           <Outlet />
         </MantineProvider>
