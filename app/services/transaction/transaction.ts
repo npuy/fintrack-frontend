@@ -1,5 +1,9 @@
 import { ActionFunctionArgs } from "@remix-run/node";
-import { Transaction, TransactionCreate } from "~/types/transaction";
+import {
+  Transaction,
+  TransactionCreate,
+  TransactionFull,
+} from "~/types/transaction";
 import { getToken } from "../authentication/middleware";
 import { env } from "~/config/config";
 
@@ -13,6 +17,18 @@ export async function getTransactions({
     },
   });
   return (await response.json()) as Transaction[];
+}
+
+export async function getTransactionsFull({
+  request,
+}: ActionFunctionArgs): Promise<TransactionFull[]> {
+  const response = await fetch(`${env.BACKEND_URL}/transaction/full`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+    },
+  });
+  return (await response.json()) as TransactionFull[];
 }
 
 export async function getTransaction({

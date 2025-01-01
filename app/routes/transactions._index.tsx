@@ -2,9 +2,10 @@ import { Button, Container, Flex, Space, Table, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
+import { AmountDisplay } from "~/components/Amount/AmountDisplay";
 import NewButton from "~/components/Buttons/NewButton";
 import { userLoggedIn } from "~/services/authentication/middleware";
-import { getTransactions } from "~/services/transaction/transaction";
+import { getTransactionsFull } from "~/services/transaction/transaction";
 
 export function meta() {
   return [{ title: "Transactions" }];
@@ -14,7 +15,7 @@ export async function loader({ request }: ActionFunctionArgs) {
   if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
     return redirect("/");
   }
-  const transactions = await getTransactions({
+  const transactions = await getTransactionsFull({
     request,
   } as ActionFunctionArgs);
   return { transactions };
@@ -36,7 +37,11 @@ export default function Accounts() {
       </Table.Td>
       <Table.Td>{new Date(element.date).toLocaleDateString()}</Table.Td>
       <Table.Td>{element.description}</Table.Td>
-      <Table.Td>{element.amount}</Table.Td>
+      <Table.Td>
+        <AmountDisplay type={element.type}>{element.amount}</AmountDisplay>
+      </Table.Td>
+      <Table.Td>{element.account.name}</Table.Td>
+      <Table.Td>{element.category.name}</Table.Td>
     </Table.Tr>
   ));
 
@@ -56,6 +61,8 @@ export default function Accounts() {
             <Table.Th>Date</Table.Th>
             <Table.Th>Description</Table.Th>
             <Table.Th>Amount</Table.Th>
+            <Table.Th>Account</Table.Th>
+            <Table.Th>Category</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>

@@ -1,0 +1,17 @@
+.expense {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 16px;
+  text-align: center;
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+.income {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 16px;
+  text-align: center;
+  background-color: rgba(51, 169, 55, 0.5);
+}
