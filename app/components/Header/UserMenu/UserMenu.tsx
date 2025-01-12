@@ -1,5 +1,5 @@
 import { Avatar, Group, Menu, UnstyledButton, Text } from "@mantine/core";
-import { IconChevronDown, IconLogout, IconSettings } from "@tabler/icons-react";
+import { IconChevronDown, IconLogout } from "@tabler/icons-react";
 import classes from "./UserMenu.module.css";
 import { useState } from "react";
 import { Link, useLoaderData } from "@remix-run/react";

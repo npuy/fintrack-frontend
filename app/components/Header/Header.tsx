@@ -1,4 +1,12 @@
-import { Burger, Container, Group, Text, Title } from "@mantine/core";
+import {
+  Burger,
+  Container,
+  Drawer,
+  Group,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./Header.module.css";
 import { Link, useLoaderData } from "@remix-run/react";
@@ -19,6 +27,17 @@ export function Header() {
 
   const items = links.map((link) => (
     <Link key={link.label} to={link.link} className={classes.link}>
+      {link.label}
+    </Link>
+  ));
+
+  const itemsMobile = links.map((link) => (
+    <Link
+      key={link.label}
+      to={link.link}
+      className={classes.menuItem}
+      onClick={toggle}
+    >
       {link.label}
     </Link>
   ));
@@ -59,6 +78,43 @@ export function Header() {
             </>
           )}
         </Group>
+
+        <Drawer opened={opened} onClose={toggle}>
+          <Stack align="flex-start" justify="flex-start" gap={20}>
+            {user ? (
+              <>
+                {itemsMobile}
+                <Link
+                  key={"Logout"}
+                  to={"/logout"}
+                  className={classes.menuItem}
+                  onClick={toggle}
+                >
+                  Logout
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  key={"Register"}
+                  to={"/register"}
+                  className={classes.menuItem}
+                  onClick={toggle}
+                >
+                  Register
+                </Link>
+                <Link
+                  key={"Login"}
+                  to={"/login"}
+                  className={classes.menuItem}
+                  onClick={toggle}
+                >
+                  Login
+                </Link>
+              </>
+            )}
+          </Stack>
+        </Drawer>
 
         <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
       </Container>
