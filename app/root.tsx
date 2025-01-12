@@ -11,6 +11,7 @@ import {
 import { Header } from "./components/Header/Header";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { getUser } from "./services/authentication/middleware";
+import "@mantine/dates/styles.css";
 
 export const loader = async ({ request }: ActionFunctionArgs) => {
   const user = await getUser({ request } as ActionFunctionArgs);
