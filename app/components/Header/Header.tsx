@@ -16,6 +16,7 @@ import { loader } from "~/root";
 const homeLink = { link: "/", label: "Home" };
 
 const links = [
+  { link: "/dashboard", label: "Dashboard" },
   { link: "/accounts", label: "Accounts" },
   { link: "/categories", label: "Categories" },
   { link: "/transactions", label: "Transactions" },
