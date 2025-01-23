@@ -36,6 +36,7 @@ export default function Accounts() {
       </Table.Td>
       <Table.Td>{element.name}</Table.Td>
       <Table.Td>{element.balance}</Table.Td>
+      <Table.Td>{element.currency.name}</Table.Td>
     </Table.Tr>
   ));
 
@@ -54,6 +55,7 @@ export default function Accounts() {
             <Table.Th>Edit</Table.Th>
             <Table.Th>Name</Table.Th>
             <Table.Th>Balance</Table.Th>
+            <Table.Th>Currency</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>{rows}</Table.Tbody>

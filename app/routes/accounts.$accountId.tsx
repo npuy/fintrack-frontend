@@ -9,6 +9,8 @@ import {
   getAccount,
   validateAccountData,
 } from "~/services/account/account";
+import { getCurrencies } from "~/services/currency/currency";
+import { Account as AccountType } from "~/types/account";
 
 export function meta() {
   return [{ title: "Account" }];
@@ -19,7 +21,23 @@ export async function loader({ request, params }: ActionFunctionArgs) {
     return redirect("/");
   }
   const accountId = params.accountId;
-  let account = { name: "", id: "new" };
+  let account: AccountType = {
+    id: "new",
+    name: "",
+    userId: "",
+    currencyId: 1,
+    currency: {
+      id: 1,
+      name: "",
+      symbol: "",
+      multiplier: 1,
+      createdAt: new Date("2000-01-01T00:00:00"),
+      updatedAt: new Date("2000-01-01T00:00:00"),
+    },
+    createdAt: new Date("2000-01-01T00:00:00"),
+    updatedAt: new Date("2000-01-01T00:00:00"),
+  };
+  const currencies = await getCurrencies({ request } as ActionFunctionArgs);
   if (accountId != "new") {
     account = await getAccount({ request, accountId } as ActionFunctionArgs & {
       accountId: string;
@@ -27,6 +45,7 @@ export async function loader({ request, params }: ActionFunctionArgs) {
   }
   return {
     account,
+    currencies,
   };
 }
 
@@ -36,17 +55,27 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
   const accountId = params.accountId;
   const formData = await request.formData();
-  const { name } = validateAccountData(formData.get("name"));
+  const { name, currencyId } = validateAccountData(
+    formData.get("name"),
+    formData.get("currency")
+  );
   if (accountId == "new") {
     // create account
-    await createAccount({ request, name } as ActionFunctionArgs & {
+    await createAccount({ request, name, currencyId } as ActionFunctionArgs & {
       name: string;
+      currencyId: number;
     });
   } else {
     // edit account
-    await editAccount({ request, name, accountId } as ActionFunctionArgs & {
+    await editAccount({
+      request,
+      name,
+      accountId,
+      currencyId,
+    } as ActionFunctionArgs & {
       name: string;
       accountId: string;
+      currencyId: number;
     });
   }
   return redirect("/accounts");
