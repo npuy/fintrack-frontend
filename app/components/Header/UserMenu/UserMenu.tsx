@@ -26,14 +26,18 @@ export function UserMenu() {
           })}
         >
           <Group gap={7}>
-            <Avatar
-              src={
-                user.image || "https://ui-avatars.com/api/?name=" + user.name
-              }
-              alt={user.email}
-              radius="xl"
-              size={20}
-            />
+            {user.image ? (
+              <Avatar src={user.image} alt={user.email} radius="xl" size={20} />
+            ) : (
+              <Avatar
+                alt={user.email}
+                key={user.name}
+                name={user.name}
+                color="initials"
+                radius="xl"
+                size={20}
+              />
+            )}
             <Text fw={500} size="sm" lh={1} mr={3}>
               {user.name}
             </Text>
