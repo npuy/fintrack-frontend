@@ -2,6 +2,6 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  categoryId: number;
+  currencyId: number;
   image?: string;
 }

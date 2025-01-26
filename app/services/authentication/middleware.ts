@@ -1,5 +1,6 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { getSession } from "~/sessions";
+import { Currency } from "~/types/account";
 import { User } from "~/types/user";
 
 export async function userLoggedIn({
@@ -21,4 +22,11 @@ export async function getToken({
 }: ActionFunctionArgs): Promise<string | undefined> {
   const session = await getSession(request.headers.get("Cookie"));
   return session.get("authToken");
+}
+
+export async function getCurrency({
+  request,
+}: ActionFunctionArgs): Promise<Currency | undefined> {
+  const session = await getSession(request.headers.get("Cookie"));
+  return session.get("userCurrency");
 }
