@@ -2,8 +2,8 @@ import { User } from "~/types/user";
 import { env } from "~/config/config";
 import { SessionDataWithoutCurrency } from "~/types/session";
 import { ActionFunctionArgs, Session } from "@remix-run/node";
-import { getCurrencyFromBackend } from "../currency/currency";
 import { getSession } from "~/sessions";
+import { Currency } from "~/types/account";
 
 export async function loginInBackend(
   email: string,
@@ -111,10 +111,18 @@ export async function setSessionData({
 }: ActionFunctionArgs & {
   sessionData: SessionDataWithoutCurrency;
 }): Promise<Session> {
-  const currency = await getCurrencyFromBackend({
-    request,
-    id: sessionData.user.currencyId,
-  } as ActionFunctionArgs & { id: number });
+  const response = await fetch(
+    `${env.BACKEND_URL}/currency/${sessionData.user.currencyId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: sessionData.authToken,
+      },
+    }
+  );
+
+  const currency: Currency = await response.json();
 
   const session = await getSession(request.headers.get("Cookie"));
 
