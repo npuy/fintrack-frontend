@@ -2,7 +2,7 @@ import { Button, Container, Flex, Space, Table, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
-import { AmountDisplay } from "~/components/Amount/AmountDisplay";
+import { BalanceDisplay } from "~/components/Balance/BalanceDisplay";
 import NewButton from "~/components/Buttons/NewButton";
 import { userLoggedIn } from "~/services/authentication/middleware";
 import { getTransactionsFull } from "~/services/transaction/transaction";
@@ -38,7 +38,7 @@ export default function Accounts() {
       <Table.Td>{new Date(element.date).toLocaleDateString()}</Table.Td>
       <Table.Td>{element.description}</Table.Td>
       <Table.Td>
-        <AmountDisplay type={element.type}>{element.amount}</AmountDisplay>
+        <BalanceDisplay symbol="$" balance={element.amount} />
       </Table.Td>
       <Table.Td>{element.account.name}</Table.Td>
       <Table.Td>{element.category.name}</Table.Td>

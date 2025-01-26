@@ -2,6 +2,7 @@ import { Button, Container, Flex, Space, Table, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
+import { BalanceDisplay } from "~/components/Balance/BalanceDisplay";
 import NewButton from "~/components/Buttons/NewButton";
 import { getAccountsWithBalance } from "~/services/account/account";
 import { userLoggedIn } from "~/services/authentication/middleware";
@@ -35,7 +36,12 @@ export default function Accounts() {
         </Button>
       </Table.Td>
       <Table.Td>{element.name}</Table.Td>
-      <Table.Td>{element.balance}</Table.Td>
+      <Table.Td>
+        <BalanceDisplay
+          balance={element.balance}
+          symbol={element.currency.symbol}
+        />
+      </Table.Td>
       <Table.Td>{element.currency.name}</Table.Td>
     </Table.Tr>
   ));
