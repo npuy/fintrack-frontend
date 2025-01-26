@@ -5,6 +5,7 @@ import { IconEdit } from "@tabler/icons-react";
 import { BalanceDisplay } from "~/components/Balance/BalanceDisplay";
 import NewButton from "~/components/Buttons/NewButton";
 import { userLoggedIn } from "~/services/authentication/middleware";
+import { getCurrencies } from "~/services/currency/currency";
 import { getTransactionsFull } from "~/services/transaction/transaction";
 
 export function meta() {
@@ -18,12 +19,17 @@ export async function loader({ request }: ActionFunctionArgs) {
   const transactions = await getTransactionsFull({
     request,
   } as ActionFunctionArgs);
-  return { transactions };
+  const currencies = await getCurrencies({ request } as ActionFunctionArgs);
+  return { transactions, currencies };
 }
 
 export default function Accounts() {
   const data = useLoaderData<typeof loader>();
   const elements = data.transactions;
+  const currencies = data.currencies;
+  const currenciesDict = Object.fromEntries(
+    currencies.map(({ id, ...rest }) => [id, rest])
+  );
   const rows = elements.map((element) => (
     <Table.Tr key={element.description}>
       <Table.Td>
@@ -38,7 +44,10 @@ export default function Accounts() {
       <Table.Td>{new Date(element.date).toLocaleDateString()}</Table.Td>
       <Table.Td>{element.description}</Table.Td>
       <Table.Td>
-        <BalanceDisplay symbol="$" balance={element.amount} />
+        <BalanceDisplay
+          symbol={currenciesDict[element.account.currencyId].symbol}
+          balance={element.amount}
+        />
       </Table.Td>
       <Table.Td>{element.account.name}</Table.Td>
       <Table.Td>{element.category.name}</Table.Td>
