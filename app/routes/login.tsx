@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { Form, redirect } from "@remix-run/react";
-import { getSession, commitSession } from "../sessions";
+import { commitSession } from "../sessions";
 import {
   Button,
   Container,
@@ -14,8 +14,10 @@ import {
 import { userLoggedIn } from "~/services/authentication/middleware";
 import {
   loginInBackend,
+  setSessionData,
   validateLoginData,
 } from "~/services/authentication/auth";
+import { SessionDataWithoutCurrency } from "~/types/session";
 
 export function meta() {
   return [{ title: "Login" }];
@@ -32,10 +34,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
     const sessionData = await loginInBackend(email, password);
 
-    const session = await getSession(request.headers.get("Cookie"));
-
-    session.set("user", sessionData.user);
-    session.set("authToken", sessionData.authToken);
+    const session = await setSessionData({
+      request,
+      sessionData,
+    } as ActionFunctionArgs & { sessionData: SessionDataWithoutCurrency });
 
     return redirect("/", {
       headers: {

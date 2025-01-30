@@ -2,8 +2,12 @@ import { Button, Container, Flex, Space, Table, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
+import { BalanceDisplay } from "~/components/Balance/BalanceDisplay";
 import NewButton from "~/components/Buttons/NewButton";
-import { userLoggedIn } from "~/services/authentication/middleware";
+import {
+  getCurrency,
+  userLoggedIn,
+} from "~/services/authentication/middleware";
 import { getCategoriesWithBalance } from "~/services/category/category";
 
 export function meta() {
@@ -11,18 +15,24 @@ export function meta() {
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  const userCurrency = await getCurrency({ request } as ActionFunctionArgs);
+  if (
+    !(await userLoggedIn({ request } as ActionFunctionArgs)) ||
+    !userCurrency
+  ) {
     return redirect("/");
   }
   const categories = await getCategoriesWithBalance({
     request,
   } as ActionFunctionArgs);
-  return { categories };
+  return { categories, userCurrency };
 }
 
 export default function Accounts() {
   const data = useLoaderData<typeof loader>();
   const elements = data.categories;
+  const userCurrency = data.userCurrency;
+  console.log(userCurrency);
   const rows = elements.map((element) => (
     <Table.Tr key={element.name}>
       <Table.Td>
@@ -35,7 +45,12 @@ export default function Accounts() {
         </Button>
       </Table.Td>
       <Table.Td>{element.name}</Table.Td>
-      <Table.Td>{element.balance}</Table.Td>
+      <Table.Td>
+        <BalanceDisplay
+          balance={element.balance}
+          symbol={userCurrency.symbol}
+        />
+      </Table.Td>
     </Table.Tr>
   ));
 

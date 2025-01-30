@@ -2,6 +2,7 @@ import {
   Container,
   Fieldset,
   Flex,
+  Select,
   Space,
   TextInput,
   Title,
@@ -15,6 +16,13 @@ import DeleteButton from "../Buttons/DeleteButton";
 export default function EditAccount() {
   const data = useLoaderData<typeof loader>();
   const [value, setValue] = useState(data.account.name);
+  const [currencyId, setCurrencyId] = useState<string | null>(
+    String(data.account.currencyId)
+  );
+  const currenciesSelectData = data.currencies.map((currency) => ({
+    value: String(currency.id),
+    label: currency.name,
+  }));
 
   return (
     <Container size="xs">
@@ -29,6 +37,15 @@ export default function EditAccount() {
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
             required
+          />
+          <Select
+            label="Currency"
+            name="currency"
+            data={currenciesSelectData}
+            value={currencyId}
+            onChange={(value) => setCurrencyId(value)}
+            required
+            nothingFoundMessage="Nothing found..."
           />
           <Space h="md" />
           <Flex justify="flex-end">
