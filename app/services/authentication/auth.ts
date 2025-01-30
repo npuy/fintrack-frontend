@@ -1,11 +1,14 @@
-import { SessionDataType } from "~/types/session";
 import { User } from "~/types/user";
 import { env } from "~/config/config";
+import { SessionDataWithoutCurrency } from "~/types/session";
+import { ActionFunctionArgs, Session } from "@remix-run/node";
+import { getSession } from "~/sessions";
+import { Currency } from "~/types/account";
 
 export async function loginInBackend(
   email: string,
   password: string
-): Promise<SessionDataType> {
+): Promise<SessionDataWithoutCurrency> {
   const response = await fetch(`${env.BACKEND_URL}/auth/login`, {
     method: "POST",
     headers: {
@@ -35,7 +38,7 @@ export async function registerInBackend(
   email: string,
   password: string,
   name: string
-): Promise<SessionDataType> {
+): Promise<SessionDataWithoutCurrency> {
   const response = await fetch(`${env.BACKEND_URL}/auth/register`, {
     method: "POST",
     headers: {
@@ -100,4 +103,32 @@ export function validateRegisterData(
     password: password as string,
     name: name as string,
   };
+}
+
+export async function setSessionData({
+  request,
+  sessionData,
+}: ActionFunctionArgs & {
+  sessionData: SessionDataWithoutCurrency;
+}): Promise<Session> {
+  const response = await fetch(
+    `${env.BACKEND_URL}/currency/${sessionData.user.currencyId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: sessionData.authToken,
+      },
+    }
+  );
+
+  const currency: Currency = await response.json();
+
+  const session = await getSession(request.headers.get("Cookie"));
+
+  session.set("user", sessionData.user);
+  session.set("authToken", sessionData.authToken);
+  session.set("userCurrency", currency);
+
+  return session;
 }
