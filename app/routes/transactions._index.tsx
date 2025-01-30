@@ -7,6 +7,7 @@ import NewButton from "~/components/Buttons/NewButton";
 import { userLoggedIn } from "~/services/authentication/middleware";
 import { getCurrencies } from "~/services/currency/currency";
 import { getTransactionsFull } from "~/services/transaction/transaction";
+import { TransactionType } from "~/types/transaction";
 
 export function meta() {
   return [{ title: "Transactions" }];
@@ -46,7 +47,11 @@ export default function Accounts() {
       <Table.Td>
         <BalanceDisplay
           symbol={currenciesDict[element.account.currencyId].symbol}
-          balance={element.amount}
+          balance={
+            element.type == TransactionType.Income
+              ? element.amount
+              : -element.amount
+          }
         />
       </Table.Td>
       <Table.Td>{element.account.name}</Table.Td>
