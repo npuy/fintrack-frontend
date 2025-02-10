@@ -21,13 +21,18 @@ export async function getTransactions({
 
 export async function getTransactionsFull({
   request,
-}: ActionFunctionArgs): Promise<TransactionFull[]> {
-  const response = await fetch(`${env.BACKEND_URL}/transaction/full`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
-    },
-  });
+  queryParams,
+}: ActionFunctionArgs & { queryParams?: string }): Promise<TransactionFull[]> {
+  const response = await fetch(
+    `${env.BACKEND_URL}/transaction/full?${queryParams}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          (await getToken({ request } as ActionFunctionArgs)) || "",
+      },
+    }
+  );
   return (await response.json()) as TransactionFull[];
 }
 
@@ -124,4 +129,44 @@ export async function deleteTransaction({
       Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
     },
   });
+}
+
+export function getQueryParamsFromFormData({
+  startDate,
+  endDate,
+  accountId,
+  categoryId,
+  type,
+}: {
+  startDate: FormDataEntryValue | null;
+  endDate: FormDataEntryValue | null;
+  accountId: FormDataEntryValue | null;
+  categoryId: FormDataEntryValue | null;
+  type: FormDataEntryValue | null;
+}): string {
+  function formatDateToYYYYMMDD(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  const queryParams = new URLSearchParams();
+
+  if (startDate)
+    queryParams.append(
+      "startDate",
+      formatDateToYYYYMMDD(new Date(startDate.toString()))
+    );
+  if (endDate)
+    queryParams.append(
+      "endDate",
+      formatDateToYYYYMMDD(new Date(endDate.toString()))
+    );
+  if (accountId) queryParams.append("accountId", accountId.toString());
+  if (categoryId) queryParams.append("categoryId", categoryId.toString());
+  if (type) queryParams.append("type", type.toString());
+
+  return queryParams.toString();
 }
