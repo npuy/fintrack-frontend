@@ -3,6 +3,7 @@ import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
 import { loader } from "~/routes/transactions._index";
 import { BalanceDisplay } from "../Balance/BalanceDisplay";
+import { TransactionType } from "~/types/transaction";
 
 export default function TableTransactions() {
   const data = useLoaderData<typeof loader>();
@@ -28,7 +29,11 @@ export default function TableTransactions() {
       <Table.Td>
         <BalanceDisplay
           symbol={currenciesDict[element.account.currencyId].symbol}
-          balance={element.amount}
+          balance={
+            element.type == TransactionType.Income
+              ? element.amount
+              : -element.amount
+          }
         />
       </Table.Td>
       <Table.Td>{element.account.name}</Table.Td>
