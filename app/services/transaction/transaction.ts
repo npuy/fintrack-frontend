@@ -1,8 +1,9 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import {
+  FilterTransactionsInput,
   Transaction,
   TransactionCreate,
-  TransactionFull,
+  TransactionFullResponse,
 } from "~/types/transaction";
 import { getToken } from "../authentication/middleware";
 import { env } from "~/config/config";
@@ -22,7 +23,9 @@ export async function getTransactions({
 export async function getTransactionsFull({
   request,
   queryParams,
-}: ActionFunctionArgs & { queryParams?: string }): Promise<TransactionFull[]> {
+}: ActionFunctionArgs & {
+  queryParams?: string;
+}): Promise<TransactionFullResponse> {
   const response = await fetch(
     `${env.BACKEND_URL}/transaction/full?${queryParams}`,
     {
@@ -33,7 +36,10 @@ export async function getTransactionsFull({
       },
     }
   );
-  return (await response.json()) as TransactionFull[];
+  if (!response.ok) {
+    throw new Error((await response.json()).message);
+  }
+  return (await response.json()) as TransactionFullResponse;
 }
 
 export async function getTransaction({
@@ -169,4 +175,31 @@ export function getQueryParamsFromFormData({
   if (type) queryParams.append("type", type.toString());
 
   return queryParams.toString();
+}
+
+export function getFiltersFromUrl(url: URL): FilterTransactionsInput {
+  const filters: FilterTransactionsInput = {};
+
+  const startDate = url.searchParams.get("startDate");
+  if (startDate) filters.startDate = new Date(startDate);
+
+  const endDate = url.searchParams.get("endDate");
+  if (endDate) filters.endDate = new Date(endDate);
+
+  const accountId = url.searchParams.get("accountId");
+  if (accountId) filters.accountId = accountId;
+
+  const categoryId = url.searchParams.get("categoryId");
+  if (categoryId) filters.categoryId = categoryId;
+
+  const type = url.searchParams.get("type");
+  if (type) filters.type = parseInt(type);
+
+  const limit = url.searchParams.get("limit");
+  if (limit) filters.limit = parseInt(limit);
+
+  const offset = url.searchParams.get("offset");
+  if (offset) filters.offset = parseInt(offset);
+
+  return filters;
 }

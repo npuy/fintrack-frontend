@@ -1,12 +1,14 @@
 import { Container, Space, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import FiltersTransaction from "~/components/Transaction/FiltersTransaction";
+import PaginationTransaction from "~/components/Transaction/PaginationTransaction";
 import TableTransactions from "~/components/Transaction/TableTransaction";
 import { getAccounts } from "~/services/account/account";
 import { userLoggedIn } from "~/services/authentication/middleware";
 import { getCategories } from "~/services/category/category";
 import { getCurrencies } from "~/services/currency/currency";
 import {
+  getFiltersFromUrl,
   getQueryParamsFromFormData,
   getTransactionsFull,
 } from "~/services/transaction/transaction";
@@ -31,14 +33,35 @@ export async function loader({ request }: ActionFunctionArgs) {
     { value: "2", label: "Expense" },
   ];
 
-  const queryParams = new URL(request.url).searchParams.toString();
-
-  const transactions = await getTransactionsFull({
-    request,
-    queryParams,
-  } as ActionFunctionArgs & { queryParams: string });
   const currencies = await getCurrencies({ request } as ActionFunctionArgs);
-  return { transactions, currencies, accounts, categories, typeSelectData };
+
+  const url = new URL(request.url);
+  const filters = getFiltersFromUrl(url);
+
+  const queryParams = url.searchParams.toString();
+
+  try {
+    const transactionResponse = await getTransactionsFull({
+      request,
+      queryParams,
+    } as ActionFunctionArgs & { queryParams: string });
+    return {
+      transactions: transactionResponse.data,
+      currencies,
+      accounts,
+      categories,
+      typeSelectData,
+      filters,
+      pagination: {
+        offset: filters.offset || 0,
+        limit: filters.limit || 20,
+        total: transactionResponse.total,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return redirect("/transactions");
+  }
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -63,6 +86,7 @@ export default function Accounts() {
       <Space h="md" />
       <FiltersTransaction />
       <TableTransactions />
+      <PaginationTransaction />
     </Container>
   );
 }

@@ -8,9 +8,21 @@ import { loader } from "~/routes/transactions._index";
 export default function FiltersTransaction() {
   const data = useLoaderData<typeof loader>();
 
-  const [accountId, setAccountId] = useState<string | null>(null);
-  const [categoryId, setCategoryId] = useState<string | null>(null);
-  const [type, setType] = useState<string | null>(null);
+  const [accountId, setAccountId] = useState<string | null>(
+    data.filters.accountId || null
+  );
+  const [categoryId, setCategoryId] = useState<string | null>(
+    data.filters.categoryId || null
+  );
+  const [type, setType] = useState<string | null>(
+    data.filters.type ? String(data.filters.type) : null
+  );
+  const [startDate, setStartDate] = useState<Date | null>(
+    data.filters.startDate ? new Date(data.filters.startDate) : null
+  );
+  const [endDate, setEndDate] = useState<Date | null>(
+    data.filters.endDate ? new Date(data.filters.endDate) : null
+  );
   const accountsSelectData = data.accounts.map((account) => ({
     value: account.id,
     label: account.name,
@@ -33,6 +45,8 @@ export default function FiltersTransaction() {
           <Form method="post">
             <Group gap="md">
               <DateInput
+                value={startDate}
+                onChange={(date) => setStartDate(date)}
                 w={204}
                 label="Date from"
                 name="startDate"
@@ -40,6 +54,8 @@ export default function FiltersTransaction() {
                 clearable
               />
               <DateInput
+                value={endDate}
+                onChange={(date) => setEndDate(date)}
                 w={204}
                 label="Date to"
                 name="endDate"

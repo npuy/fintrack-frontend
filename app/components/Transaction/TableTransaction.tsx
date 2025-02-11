@@ -14,7 +14,7 @@ export default function TableTransactions() {
     currencies.map(({ id, ...rest }) => [id, rest])
   );
   const rows = elements.map((element) => (
-    <Table.Tr key={element.description}>
+    <Table.Tr key={element.id}>
       <Table.Td>
         <Button
           component="a"
