@@ -8,6 +8,11 @@ export function BalanceDisplay({
   balance: number;
   symbol: string;
 }) {
+  const formattedBalance = new Intl.NumberFormat("DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(balance);
+
   return (
     <Badge
       color={balance >= 0 ? "teal" : "red"}
@@ -15,7 +20,7 @@ export function BalanceDisplay({
       leftSection={symbol}
       className={classes.badge}
     >
-      {(Math.round(balance * 100) / 100).toFixed(2)}
+      {formattedBalance}
     </Badge>
   );
 }
