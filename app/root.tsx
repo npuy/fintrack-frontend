@@ -12,6 +12,8 @@ import { Header } from "./components/Header/Header";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { getUser } from "./services/authentication/middleware";
 import "@mantine/dates/styles.css";
+import { Footer } from "./components/Footer/Footer";
+import { Body } from "./components/Main/Body";
 
 export const loader = async ({ request }: ActionFunctionArgs) => {
   const user = await getUser({ request } as ActionFunctionArgs);
@@ -31,7 +33,10 @@ export default function App() {
       <body>
         <MantineProvider>
           <Header />
-          <Outlet />
+          <Body>
+            <Outlet />
+          </Body>
+          <Footer />
         </MantineProvider>
         <ScrollRestoration />
         <Scripts />

@@ -1,19 +1,10 @@
-import {
-  Burger,
-  Container,
-  Drawer,
-  Group,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Burger, Container, Drawer, Group, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./Header.module.css";
 import { Link, useLoaderData } from "@remix-run/react";
 import { UserMenu } from "./UserMenu/UserMenu";
 import { loader } from "~/root";
-
-const homeLink = { link: "/", label: "Home" };
+import { FintrackLogo } from "../Logo/FintrackLogo";
 
 const links = [
   { link: "/dashboard", label: "Dashboard" },
@@ -46,22 +37,7 @@ export function Header() {
   return (
     <header className={classes.header}>
       <Container size="md" className={classes.inner}>
-        <Link
-          key={homeLink.label}
-          to={homeLink.link}
-          className={classes.menuItem}
-        >
-          <Title className={classes.title} ta="center">
-            <Text
-              inherit
-              variant="gradient"
-              component="span"
-              gradient={{ from: "pink", to: "yellow" }}
-            >
-              FinTrack
-            </Text>
-          </Title>
-        </Link>
+        <FintrackLogo />
         <Group gap={5} visibleFrom="xs">
           {user ? (
             <>
