@@ -37,7 +37,14 @@ export default function NewTransaction() {
         <Form method="post">
           {" "}
           <TextInput label="Description" name="description" required />
-          <NumberInput label="Amount" name="amount" decimalScale={2} required />
+          <NumberInput
+            label="Amount"
+            name="amount"
+            decimalScale={2}
+            decimalSeparator=","
+            thousandSeparator="."
+            required
+          />
           <DateInput
             label="Date"
             name="date"
