@@ -1,8 +1,9 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import {
+  FilterTransactionsInput,
   Transaction,
   TransactionCreate,
-  TransactionFull,
+  TransactionFullResponse,
 } from "~/types/transaction";
 import { getToken } from "../authentication/middleware";
 import { env } from "~/config/config";
@@ -21,14 +22,24 @@ export async function getTransactions({
 
 export async function getTransactionsFull({
   request,
-}: ActionFunctionArgs): Promise<TransactionFull[]> {
-  const response = await fetch(`${env.BACKEND_URL}/transaction/full`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
-    },
-  });
-  return (await response.json()) as TransactionFull[];
+  queryParams,
+}: ActionFunctionArgs & {
+  queryParams?: string;
+}): Promise<TransactionFullResponse> {
+  const response = await fetch(
+    `${env.BACKEND_URL}/transaction/full?${queryParams}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          (await getToken({ request } as ActionFunctionArgs)) || "",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error((await response.json()).message);
+  }
+  return (await response.json()) as TransactionFullResponse;
 }
 
 export async function getTransaction({
@@ -124,4 +135,71 @@ export async function deleteTransaction({
       Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
     },
   });
+}
+
+export function getQueryParamsFromFormData({
+  startDate,
+  endDate,
+  accountId,
+  categoryId,
+  type,
+}: {
+  startDate: FormDataEntryValue | null;
+  endDate: FormDataEntryValue | null;
+  accountId: FormDataEntryValue | null;
+  categoryId: FormDataEntryValue | null;
+  type: FormDataEntryValue | null;
+}): string {
+  function formatDateToYYYYMMDD(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  const queryParams = new URLSearchParams();
+
+  if (startDate)
+    queryParams.append(
+      "startDate",
+      formatDateToYYYYMMDD(new Date(startDate.toString()))
+    );
+  if (endDate)
+    queryParams.append(
+      "endDate",
+      formatDateToYYYYMMDD(new Date(endDate.toString()))
+    );
+  if (accountId) queryParams.append("accountId", accountId.toString());
+  if (categoryId) queryParams.append("categoryId", categoryId.toString());
+  if (type) queryParams.append("type", type.toString());
+
+  return queryParams.toString();
+}
+
+export function getFiltersFromUrl(url: URL): FilterTransactionsInput {
+  const filters: FilterTransactionsInput = {};
+
+  const startDate = url.searchParams.get("startDate");
+  if (startDate) filters.startDate = new Date(startDate);
+
+  const endDate = url.searchParams.get("endDate");
+  if (endDate) filters.endDate = new Date(endDate);
+
+  const accountId = url.searchParams.get("accountId");
+  if (accountId) filters.accountId = accountId;
+
+  const categoryId = url.searchParams.get("categoryId");
+  if (categoryId) filters.categoryId = categoryId;
+
+  const type = url.searchParams.get("type");
+  if (type) filters.type = parseInt(type);
+
+  const limit = url.searchParams.get("limit");
+  if (limit) filters.limit = parseInt(limit);
+
+  const offset = url.searchParams.get("offset");
+  if (offset) filters.offset = parseInt(offset);
+
+  return filters;
 }
