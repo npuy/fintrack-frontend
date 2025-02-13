@@ -1,5 +1,6 @@
-import { Title, Text } from "@mantine/core";
+import { Title, Text, Group } from "@mantine/core";
 import classes from "./Welcome.module.css";
+import { ThemeToggle } from "./ThemeToggle/ThemeToggle";
 
 export function Welcome() {
   return (
@@ -19,12 +20,10 @@ export function Welcome() {
         Track your expenses effortlessly, gain insights into your spending
         habits, and plan for the future. FinTrack makes managing your money
         simple, smart, and stress-free.
-        {/* {" "}
-        <Anchor href="https://mantine.dev/guides/remix/" size="lg">
-          this guide
-        </Anchor>
-        . To get started edit index.tsx file. */}
       </Text>
+      <Group mt="xl" justify="center">
+        <ThemeToggle />
+      </Group>
     </>
   );
 }
