@@ -1,8 +1,4 @@
-import {
-  IconBrandInstagram,
-  IconBrandTwitter,
-  IconBrandYoutube,
-} from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react";
 import { ActionIcon, Container, Group } from "@mantine/core";
 import classes from "./Footer.module.css";
 import { FintrackLogo } from "../Logo/FintrackLogo";
@@ -18,14 +14,23 @@ export function Footer() {
           justify="flex-end"
           wrap="nowrap"
         >
-          <ActionIcon size="lg" color="gray" variant="subtle">
-            <IconBrandTwitter size={18} stroke={1.5} />
+          <ActionIcon
+            component="a"
+            href="https://github.com/Nicolass2001"
+            size="lg"
+            color="gray"
+            variant="subtle"
+          >
+            <IconBrandGithub size={18} stroke={1.5} />
           </ActionIcon>
-          <ActionIcon size="lg" color="gray" variant="subtle">
-            <IconBrandYoutube size={18} stroke={1.5} />
-          </ActionIcon>
-          <ActionIcon size="lg" color="gray" variant="subtle">
-            <IconBrandInstagram size={18} stroke={1.5} />
+          <ActionIcon
+            component="a"
+            href="https://www.linkedin.com/in/nicolas-pereira-9b4b83259/"
+            size="lg"
+            color="gray"
+            variant="subtle"
+          >
+            <IconBrandLinkedin size={18} stroke={1.5} />
           </ActionIcon>
         </Group>
       </Container>
