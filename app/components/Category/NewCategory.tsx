@@ -1,13 +1,6 @@
-import {
-  Container,
-  Fieldset,
-  Flex,
-  Space,
-  TextInput,
-  Title,
-} from "@mantine/core";
-import { Form } from "@remix-run/react";
+import { Container, Fieldset, Space, Title } from "@mantine/core";
 import CreateButton from "../Buttons/CreateButton";
+import { FormCategory } from "./FormCategory";
 
 export default function NewCategory() {
   return (
@@ -16,13 +9,9 @@ export default function NewCategory() {
         <Space h="md" />
         <Title order={1}>New Category</Title>
         <Space h="md" />
-        <Form method="post">
-          <TextInput label="Name" name="name" required />
-          <Space h="md" />
-          <Flex justify="flex-end">
-            <CreateButton />
-          </Flex>
-        </Form>
+        <FormCategory loadData={{}}>
+          <CreateButton />
+        </FormCategory>
       </Fieldset>
     </Container>
   );

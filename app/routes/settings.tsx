@@ -1,16 +1,7 @@
-import {
-  Button,
-  Container,
-  Fieldset,
-  Flex,
-  Select,
-  Space,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Container, Fieldset, Space, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
-import { useState } from "react";
+import { useLoaderData } from "@remix-run/react";
+import { FormSettings } from "~/components/Settings/FormSettings";
 import { setSessionData } from "~/services/authentication/auth";
 import {
   getCurrency,
@@ -37,6 +28,7 @@ export async function loader({ request }: ActionFunctionArgs) {
   ) {
     return redirect("/");
   }
+
   const currencies = await getCurrencies({ request } as ActionFunctionArgs);
   return { currencies, userCurrency, user };
 }
@@ -51,12 +43,14 @@ export async function action({ request }: ActionFunctionArgs) {
   ) {
     return redirect("/");
   }
+
   const formData = await request.formData();
   const { email, currencyId, name } = validateUpdateUserData({
     email: formData.get("email"),
     currencyId: formData.get("currency"),
     name: formData.get("name"),
   });
+
   // Update user data
   await updateUserData({
     request,
@@ -90,14 +84,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Settings() {
   const data = useLoaderData<typeof loader>();
-  const [name, setName] = useState(data.user.name);
-  const [email, setEmail] = useState(data.user.email);
-  const userCurrencyId = String(data.userCurrency.id);
-  const [currencyId, setCurrencyId] = useState<string | null>(userCurrencyId);
-  const currenciesSelectData = data.currencies.map((currency) => ({
-    value: String(currency.id),
-    label: currency.name,
-  }));
+
+  const loadData = {
+    name: data.user.name,
+    email: data.user.email,
+    currency: String(data.userCurrency.id),
+  };
 
   return (
     <Container size="xs">
@@ -106,40 +98,7 @@ export default function Settings() {
         <Title order={1}>Update user data</Title>
         <Space h="md" />
 
-        <Form method="post">
-          <TextInput
-            label="Name"
-            name="name"
-            type="text"
-            required
-            value={name}
-            onChange={(event) => setName(event.currentTarget.value)}
-          />
-          <TextInput
-            label="Email"
-            name="email"
-            type="email"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.currentTarget.value)}
-          />
-          <Select
-            label="Display currency"
-            name="currency"
-            description="Currency used to display amounts"
-            data={currenciesSelectData}
-            value={currencyId}
-            onChange={(value) => setCurrencyId(value)}
-            required
-            nothingFoundMessage="Nothing found..."
-          />
-          <Space h="md" />
-          <Flex justify="flex-end">
-            <Button variant="filled" type="submit">
-              Update
-            </Button>
-          </Flex>
-        </Form>
+        <FormSettings loadData={loadData} />
       </Fieldset>
     </Container>
   );

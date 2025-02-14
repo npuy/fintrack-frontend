@@ -87,7 +87,7 @@ export function validateTransactionData(
     throw new Error("Invalid transaction data");
   }
   return {
-    amount: parseFloat(amount as string),
+    amount: parseFloat((amount as string).replace(",", ".").replace(".", "")),
     description: description as string,
     date: new Date(date as string),
     accountId: accountId as string,
