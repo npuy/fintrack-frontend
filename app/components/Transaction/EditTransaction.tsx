@@ -58,6 +58,8 @@ export default function EditTransaction() {
             name="amount"
             decimalScale={2}
             value={data.transaction.amount}
+            decimalSeparator=","
+            thousandSeparator="."
             required
           />
           <DateInput
