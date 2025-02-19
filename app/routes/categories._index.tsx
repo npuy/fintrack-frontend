@@ -32,7 +32,6 @@ export default function Accounts() {
   const data = useLoaderData<typeof loader>();
   const elements = data.categories;
   const userCurrency = data.userCurrency;
-  console.log(userCurrency);
   const rows = elements.map((element) => (
     <Table.Tr key={element.name}>
       <Table.Td>
