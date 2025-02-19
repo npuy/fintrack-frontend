@@ -1,4 +1,11 @@
-import { Button, Flex, Select, Space, TextInput } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  NumberInput,
+  Select,
+  Space,
+  TextInput,
+} from "@mantine/core";
 import { Form, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 import { loader } from "~/routes/settings";
@@ -7,6 +14,7 @@ interface LoadData {
   name: string;
   email: string;
   currency: string;
+  payDay: number;
 }
 
 export function FormSettings({ loadData }: { loadData: LoadData }) {
@@ -21,12 +29,19 @@ export function FormSettings({ loadData }: { loadData: LoadData }) {
     name: loadData.name,
     email: loadData.email,
     currency: loadData.currency,
+    payDay: loadData.payDay,
   });
 
-  const [formErrors, setFormErrors] = useState({
-    name: false,
-    email: false,
-    currency: false,
+  const [formErrors, setFormErrors] = useState<{
+    name: string | null;
+    email: string | null;
+    currency: string | null;
+    payDay: string | null;
+  }>({
+    name: null,
+    email: null,
+    currency: null,
+    payDay: null,
   });
 
   const handleChange = (
@@ -41,9 +56,14 @@ export function FormSettings({ loadData }: { loadData: LoadData }) {
     event.preventDefault(); // Prevent default form submission
 
     const errors = {
-      name: !formValues.name,
-      email: !formValues.email,
-      currency: !formValues.currency,
+      name: !formValues.name ? "This field is required" : null,
+      email: !formValues.email ? "This field is required" : null,
+      currency: !formValues.currency ? "This field is required" : null,
+      payDay: !formValues.payDay
+        ? "This field is required"
+        : formValues.payDay < 1 || formValues.payDay > 31
+        ? "This field should be between 1 and 31"
+        : null,
     };
 
     setFormErrors(errors);
@@ -63,7 +83,7 @@ export function FormSettings({ loadData }: { loadData: LoadData }) {
         type="text"
         value={formValues.name}
         onChange={(event) => handleChange("name", event.currentTarget.value)}
-        error={formErrors.name ? "This field is required" : null}
+        error={formErrors.name}
       />
       <TextInput
         label="Email"
@@ -71,7 +91,7 @@ export function FormSettings({ loadData }: { loadData: LoadData }) {
         type="email"
         value={formValues.email}
         onChange={(event) => handleChange("email", event.currentTarget.value)}
-        error={formErrors.email ? "This field is required" : null}
+        error={formErrors.email}
       />
       <Select
         label="Display currency"
@@ -81,7 +101,17 @@ export function FormSettings({ loadData }: { loadData: LoadData }) {
         value={formValues.currency}
         onChange={(value) => handleChange("currency", value)}
         nothingFoundMessage="Nothing found..."
-        error={formErrors.currency ? "This field is required" : null}
+        error={formErrors.currency}
+      />
+      <NumberInput
+        label="Pay day"
+        name="payDay"
+        description="Day of the month when you receive your salary"
+        value={formValues.payDay}
+        onChange={(value) => handleChange("payDay", value)}
+        error={formErrors.payDay}
+        min={1}
+        max={31}
       />
       <Space h="md" />
       <Flex justify="flex-end">
