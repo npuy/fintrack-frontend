@@ -1,18 +1,30 @@
 import { getToken } from "~/services/authentication/middleware";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { Category, CategoryWithBalance } from "~/types/category";
+import {
+  Category,
+  CategoryFiltersInput,
+  CategoryWithBalance,
+} from "~/types/category";
 import { env } from "~/config/config";
+import { formatDateToYYYYMMDD } from "~/utils/dates";
 
 export async function getCategoriesWithBalance({
   request,
-}: ActionFunctionArgs): Promise<CategoryWithBalance[]> {
-  const response = await fetch(`${env.BACKEND_URL}/category/balance`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
-    },
-  });
+  queryParams,
+}: ActionFunctionArgs & {
+  queryParams: string;
+}): Promise<CategoryWithBalance[]> {
+  const response = await fetch(
+    `${env.BACKEND_URL}/category/balance?${queryParams}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          (await getToken({ request } as ActionFunctionArgs)) || "",
+      },
+    }
+  );
   return (await response.json()) as CategoryWithBalance[];
 }
 
@@ -93,4 +105,39 @@ export async function deleteCategory({
       Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
     },
   });
+}
+
+export function getQueryParamsFromFormData({
+  startDate,
+  endDate,
+}: {
+  startDate: FormDataEntryValue | null;
+  endDate: FormDataEntryValue | null;
+}): string {
+  const queryParams = new URLSearchParams();
+
+  if (startDate)
+    queryParams.append(
+      "startDate",
+      formatDateToYYYYMMDD(new Date(startDate.toString()))
+    );
+  if (endDate)
+    queryParams.append(
+      "endDate",
+      formatDateToYYYYMMDD(new Date(endDate.toString()))
+    );
+
+  return queryParams.toString();
+}
+
+export function getCategoryFiltersFromUrl(url: URL): CategoryFiltersInput {
+  const filters: CategoryFiltersInput = {};
+
+  const startDate = url.searchParams.get("startDate");
+  if (startDate) filters.startDate = startDate;
+
+  const endDate = url.searchParams.get("endDate");
+  if (endDate) filters.endDate = endDate;
+
+  return filters;
 }

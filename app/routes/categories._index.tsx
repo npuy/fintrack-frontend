@@ -1,14 +1,18 @@
-import { Button, Container, Flex, Space, Table, Title } from "@mantine/core";
+import { Button, Container, Space, Table, Title } from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
 import { BalanceDisplay } from "~/components/Balance/BalanceDisplay";
-import NewButton from "~/components/Buttons/NewButton";
+import FiltersCategory from "~/components/Category/FiltersCategory";
 import {
   getCurrency,
   userLoggedIn,
 } from "~/services/authentication/middleware";
-import { getCategoriesWithBalance } from "~/services/category/category";
+import {
+  getCategoriesWithBalance,
+  getCategoryFiltersFromUrl,
+  getQueryParamsFromFormData,
+} from "~/services/category/category";
 
 export function meta() {
   return [{ title: "Categories" }];
@@ -22,10 +26,30 @@ export async function loader({ request }: ActionFunctionArgs) {
   ) {
     return redirect("/");
   }
+
+  const url = new URL(request.url);
+  const filters = getCategoryFiltersFromUrl(url);
+
+  const queryParams = url.searchParams.toString();
+
   const categories = await getCategoriesWithBalance({
     request,
-  } as ActionFunctionArgs);
-  return { categories, userCurrency };
+    queryParams,
+  } as ActionFunctionArgs & {
+    queryParams: string;
+  });
+  return { categories, userCurrency, filters };
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+
+  const queryParams = getQueryParamsFromFormData({
+    startDate: formData.get("startDate"),
+    endDate: formData.get("endDate"),
+  });
+
+  return redirect(`/categories?${queryParams}`);
 }
 
 export default function Accounts() {
@@ -58,10 +82,7 @@ export default function Accounts() {
       <Space h="md" />
       <Title order={1}>Categories</Title>
       <Space h="md" />
-      <Flex justify="flex-end">
-        <NewButton link="/categories/new">Category</NewButton>
-      </Flex>
-      <Space h="md" />
+      <FiltersCategory />
       <Table>
         <Table.Thead>
           <Table.Tr>
