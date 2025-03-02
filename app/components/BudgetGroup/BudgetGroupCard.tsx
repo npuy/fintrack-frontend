@@ -23,6 +23,7 @@ export function BudgetGroupCard({
   spent,
   currencySymbol,
 }: BudgetGroupCardProps) {
+  spent = spent * -1;
   const progress = (spent / limit) * 100;
 
   return (

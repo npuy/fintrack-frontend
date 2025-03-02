@@ -40,7 +40,9 @@ export function validateBudgetData(
   formData: FormData
 ): UpdateBudgetGroupInput {
   const name = formData.get("name") as string;
-  const limit = Number(formData.get("limit"));
+  const limit = Number(
+    (formData.get("limit") as string).replace(".", "").replace(",", ".")
+  );
   const currencyId = Number(formData.get("currency"));
   const categoriesId = (formData.get("categories") as string).split(",");
 
