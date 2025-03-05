@@ -12,7 +12,7 @@ export async function getCategoriesWithBalance({
   request,
   queryParams,
 }: ActionFunctionArgs & {
-  queryParams: string;
+  queryParams?: string;
 }): Promise<CategoryWithBalance[]> {
   const response = await fetch(
     `${env.BACKEND_URL}/category/balance?${queryParams}`,
