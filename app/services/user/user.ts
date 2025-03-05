@@ -6,19 +6,24 @@ export function validateUpdateUserData({
   email,
   currencyId,
   name,
+  payDay,
 }: {
   email: FormDataEntryValue | null;
   currencyId: FormDataEntryValue | null;
   name: FormDataEntryValue | null;
+  payDay: FormDataEntryValue | null;
 }) {
   if (
     !email ||
     !currencyId ||
     !name ||
+    !payDay ||
     typeof email !== "string" ||
     typeof currencyId !== "string" ||
     typeof name !== "string" ||
-    typeof Number(currencyId) !== "number"
+    isNaN(Number(currencyId)) ||
+    typeof payDay !== "string" ||
+    isNaN(Number(payDay))
   ) {
     throw new Error("Invalid update user data");
   }
@@ -26,6 +31,7 @@ export function validateUpdateUserData({
     email: email as string,
     currencyId: Number(currencyId),
     name: name as string,
+    payDay: Number(payDay),
   };
 }
 
@@ -34,10 +40,12 @@ export async function updateUserData({
   email,
   currencyId,
   name,
+  payDay,
 }: ActionFunctionArgs & {
   email: string;
   currencyId: number;
   name: string;
+  payDay: number;
 }) {
   await fetch(`${env.BACKEND_URL}/user`, {
     method: "PUT",
@@ -45,6 +53,6 @@ export async function updateUserData({
       "Content-Type": "application/json",
       Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
     },
-    body: JSON.stringify({ email, currencyId, name }),
+    body: JSON.stringify({ email, currencyId, name, payDay }),
   });
 }

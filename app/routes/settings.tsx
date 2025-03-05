@@ -45,10 +45,11 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   const formData = await request.formData();
-  const { email, currencyId, name } = validateUpdateUserData({
+  const { email, currencyId, name, payDay } = validateUpdateUserData({
     email: formData.get("email"),
     currencyId: formData.get("currency"),
     name: formData.get("name"),
+    payDay: formData.get("payDay"),
   });
 
   // Update user data
@@ -57,16 +58,19 @@ export async function action({ request }: ActionFunctionArgs) {
     email,
     currencyId,
     name,
+    payDay,
   } as ActionFunctionArgs & {
     email: string;
     currencyId: number;
     name: string;
+    payDay: number;
   });
 
   // Update session data
   user.email = email;
   user.name = name;
   user.currencyId = currencyId;
+  user.payDay = payDay;
   const session = await setSessionData({
     request,
     sessionData: {
@@ -89,6 +93,7 @@ export default function Settings() {
     name: data.user.name,
     email: data.user.email,
     currency: String(data.userCurrency.id),
+    payDay: data.user.payDay,
   };
 
   return (
