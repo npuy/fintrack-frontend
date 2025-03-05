@@ -21,9 +21,9 @@ export function validateUpdateUserData({
     typeof email !== "string" ||
     typeof currencyId !== "string" ||
     typeof name !== "string" ||
-    typeof Number(currencyId) !== "number" ||
+    isNaN(Number(currencyId)) ||
     typeof payDay !== "string" ||
-    typeof Number(payDay) !== "number"
+    isNaN(Number(payDay))
   ) {
     throw new Error("Invalid update user data");
   }
