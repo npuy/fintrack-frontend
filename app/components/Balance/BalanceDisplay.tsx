@@ -1,5 +1,6 @@
 import { Badge } from "@mantine/core";
 import classes from "./BalanceDisplay.module.css";
+import { formatAmount } from "~/utils/amount";
 
 export function BalanceDisplay({
   balance,
@@ -8,10 +9,7 @@ export function BalanceDisplay({
   balance: number;
   symbol: string;
 }) {
-  const formattedBalance = new Intl.NumberFormat("DE", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(balance);
+  const formattedBalance = formatAmount(balance);
 
   return (
     <Badge

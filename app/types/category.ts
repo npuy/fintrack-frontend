@@ -9,3 +9,8 @@ export interface Category {
 export interface CategoryWithBalance extends Category {
   balance: number;
 }
+
+export interface CategoryFiltersInput {
+  startDate?: string;
+  endDate?: string;
+}
