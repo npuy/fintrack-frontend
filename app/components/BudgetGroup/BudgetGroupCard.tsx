@@ -1,5 +1,6 @@
 import { Card, Progress, Text } from "@mantine/core";
 import { BudgetGroupCardDropdown } from "./BudgetGroupCardDropdown";
+import { formatAmount } from "~/utils/amount";
 
 interface BudgetGroupCardProps {
   id: string;
@@ -7,13 +8,6 @@ interface BudgetGroupCardProps {
   limit: number;
   spent: number;
   currencySymbol: string;
-}
-
-function formatAmount(amount: number) {
-  return new Intl.NumberFormat("DE", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
 }
 
 export function BudgetGroupCard({
