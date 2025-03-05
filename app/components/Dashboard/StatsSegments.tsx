@@ -105,7 +105,7 @@ export function StatsSegments() {
     <Progress.Section
       value={segment.part}
       color={segment.color}
-      key={segment.color}
+      key={segment.key}
     >
       {segment.part > 10 && <Progress.Label>{segment.part}%</Progress.Label>}
     </Progress.Section>
