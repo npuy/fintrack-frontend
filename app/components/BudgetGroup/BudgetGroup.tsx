@@ -1,4 +1,4 @@
-import { Group, Title } from "@mantine/core";
+import { Group, ScrollArea, Title } from "@mantine/core";
 import NewButton from "../Buttons/NewButton";
 import { BudgetGroupCard } from "./BudgetGroupCard";
 import { loader } from "~/routes/dashboard";
@@ -29,9 +29,11 @@ export function BudgetGroup() {
         <Title order={1}>Budget Groups</Title>
         <NewButton link="/budget/new">Budget Group</NewButton>
       </Group>
-      <Group justify="center" gap="xl">
-        {budgetCards}
-      </Group>
+      <ScrollArea>
+        <Group justify="center" gap="xl">
+          {budgetCards}
+        </Group>
+      </ScrollArea>
     </>
   );
 }

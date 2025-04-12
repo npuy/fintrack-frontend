@@ -1,4 +1,4 @@
-import { Button, Table } from "@mantine/core";
+import { Button, ScrollArea, Table } from "@mantine/core";
 import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
 import { loader } from "~/routes/transactions._index";
@@ -42,18 +42,20 @@ export default function TableTransactions() {
   ));
 
   return (
-    <Table>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>Edit</Table.Th>
-          <Table.Th>Date</Table.Th>
-          <Table.Th>Description</Table.Th>
-          <Table.Th>Amount</Table.Th>
-          <Table.Th>Account</Table.Th>
-          <Table.Th>Category</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>{rows}</Table.Tbody>
-    </Table>
+    <ScrollArea>
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Edit</Table.Th>
+            <Table.Th>Date</Table.Th>
+            <Table.Th>Description</Table.Th>
+            <Table.Th>Amount</Table.Th>
+            <Table.Th>Account</Table.Th>
+            <Table.Th>Category</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
+      </Table>
+    </ScrollArea>
   );
 }
