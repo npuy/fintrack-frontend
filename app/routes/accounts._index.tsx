@@ -1,4 +1,12 @@
-import { Button, Container, Flex, Space, Table, Title } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Flex,
+  ScrollArea,
+  Space,
+  Table,
+  Title,
+} from "@mantine/core";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { IconEdit } from "@tabler/icons-react";
@@ -55,17 +63,19 @@ export default function Accounts() {
         <NewButton link="/accounts/new">Account</NewButton>
       </Flex>
       <Space h="md" />
-      <Table>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Edit</Table.Th>
-            <Table.Th>Name</Table.Th>
-            <Table.Th>Balance</Table.Th>
-            <Table.Th>Currency</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>{rows}</Table.Tbody>
-      </Table>
+      <ScrollArea>
+        <Table>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Edit</Table.Th>
+              <Table.Th>Name</Table.Th>
+              <Table.Th>Balance</Table.Th>
+              <Table.Th>Currency</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>
+      </ScrollArea>
     </Container>
   );
 }
