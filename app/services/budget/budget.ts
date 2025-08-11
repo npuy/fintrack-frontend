@@ -70,7 +70,6 @@ export async function createBudgetGroup({
     },
     body: JSON.stringify(budgetData),
   });
-  console.log("createBudgetGroup", budgetData);
   return await response.json();
 }
 

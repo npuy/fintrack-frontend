@@ -39,7 +39,10 @@ export default function FiltersTransaction() {
           <Accordion.Control h={37} w={120}>
             Filter
           </Accordion.Control>
-          <NewButton link="/transactions/new">Transaction</NewButton>
+          <Group justify="flex-end" gap="xs">
+            <NewButton link="/transfer">Transfer</NewButton>
+            <NewButton link="/transactions/new">Transaction</NewButton>
+          </Group>
         </Group>
         <Accordion.Panel>
           <Form method="post">

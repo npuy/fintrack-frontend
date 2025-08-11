@@ -15,6 +15,7 @@ import {
   Transaction as TransactionType,
 } from "~/types/transaction";
 import { getCategories } from "~/services/category/category";
+import { typeSelectData } from "~/types/transactionType";
 
 export function meta() {
   return [{ title: "Transaction" }];
@@ -64,11 +65,6 @@ export async function loader({ request, params }: ActionFunctionArgs) {
   } as ActionFunctionArgs);
 
   const categories = await getCategories({ request } as ActionFunctionArgs);
-
-  const typeSelectData = [
-    { value: "1", label: "Income" },
-    { value: "2", label: "Expense" },
-  ];
 
   const transactionId = params.transactionId;
   let transaction: TransactionType = {
