@@ -49,9 +49,6 @@ export async function action({ request }: ActionFunctionArgs) {
     typeSelectData[0].value
   );
 
-  console.log("Transaction From Data:", transactionFromData);
-  console.log("Transaction To Data:", transactionToData);
-
   await createTransaction({
     request,
     transactionData: transactionFromData,

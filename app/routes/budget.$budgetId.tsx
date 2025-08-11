@@ -24,7 +24,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const budgetData = validateBudgetData(budgetId, formData);
 
   if (budgetId == "new") {
-    console.log("createBudgetGroup");
     await createBudgetGroup({
       token,
       budgetData,

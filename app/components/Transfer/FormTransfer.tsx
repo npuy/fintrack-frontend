@@ -38,7 +38,7 @@ export function FormTransfer({ children }: { children: ReactNode }) {
     category: "",
   });
 
-  const [diffrentCurrencies, setDifferentCurrencies] = useState(false);
+  const [differentCurrencies, setDifferentCurrencies] = useState(false);
 
   const [currencies, setCurrencies] = useState({
     accountFrom: "",
@@ -102,15 +102,15 @@ export function FormTransfer({ children }: { children: ReactNode }) {
         ? "Description is required"
         : formErrors.description,
       amount:
-        !formValues.amount && !diffrentCurrencies
+        !formValues.amount && !differentCurrencies
           ? "Amount is required"
           : formErrors.amount,
       amountFrom:
-        !formValues.amountFrom && diffrentCurrencies
+        !formValues.amountFrom && differentCurrencies
           ? "Amount from is required"
           : formErrors.amountFrom,
       amountTo:
-        !formValues.amountTo && diffrentCurrencies
+        !formValues.amountTo && differentCurrencies
           ? "Amount to is required"
           : formErrors.amountTo,
       date: !formValues.date ? "Date is required" : formErrors.date,
@@ -126,8 +126,6 @@ export function FormTransfer({ children }: { children: ReactNode }) {
     };
 
     setFormErrors(errors);
-
-    console.log("Form Errors:", errors);
 
     const hasErrors = Object.values(errors).some((error) => error);
     if (!hasErrors) {
@@ -165,7 +163,7 @@ export function FormTransfer({ children }: { children: ReactNode }) {
         }
         error={formErrors.description ? formErrors.description : null}
       />
-      {diffrentCurrencies ? (
+      {differentCurrencies ? (
         <>
           <NumberInput
             label={"Amount From" + ` (${currencies.accountFrom})`}
