@@ -12,6 +12,7 @@ import {
   getQueryParamsFromFormData,
   getTransactionsFull,
 } from "~/services/transaction/transaction";
+import { typeSelectData } from "~/types/transactionType";
 
 export function meta() {
   return [{ title: "Transactions" }];
@@ -27,11 +28,6 @@ export async function loader({ request }: ActionFunctionArgs) {
   } as ActionFunctionArgs);
 
   const categories = await getCategories({ request } as ActionFunctionArgs);
-
-  const typeSelectData = [
-    { value: "1", label: "Income" },
-    { value: "2", label: "Expense" },
-  ];
 
   const currencies = await getCurrencies({ request } as ActionFunctionArgs);
 
