@@ -16,7 +16,7 @@ export function Footer() {
         >
           <ActionIcon
             component="a"
-            href="https://github.com/Nicolass2001"
+            href="https://github.com/npuy"
             size="lg"
             color="gray"
             variant="subtle"
