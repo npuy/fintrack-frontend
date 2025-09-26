@@ -1,10 +1,10 @@
 name: Deploy to Server
 
-# Trigger the workflow when a merge occurs into main (merge generates a push to main)
+# Trigger the workflow when a merge occurs into main
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 20 # Adjust to your Node.js version
 
       # 3️⃣ Install dependencies and build the project
       - name: Install dependencies
@@ -34,17 +34,22 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 5️⃣ Sync the build and necessary files to the server
+      # 5️⃣ Add the server to known_hosts for secure SSH connection
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 174.138.110.54 >> ~/.ssh/known_hosts
+
+      # 6️⃣ Sync the build and necessary files to the server
       - name: Sync build to server
         run: |
           rsync -avz --delete ./build/ deployer@174.138.110.54:/home/deployer/fintrack-frontend/build/
           rsync -avz --delete package.json package-lock.json deployer@174.138.110.54:/home/deployer/fintrack-frontend/
 
-      # 6️⃣ Restart the app using PM2
+      # 7️⃣ Restart the app using PM2
       - name: Restart app with PM2
         run: |
-          ssh -o StrictHostKeyChecking=no deployer@174.138.110.54 << 'EOF'
+          ssh deployer@174.138.110.54 << 'EOF'
             cd /home/deployer/fintrack-frontend
             pm2 reload ft-front
           EOF
-
