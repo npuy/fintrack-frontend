@@ -9,7 +9,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import { Header } from "./components/Header/Header";
-import { ActionFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, LinksFunction } from "@remix-run/node";
 import { getUser } from "./services/authentication/middleware";
 import "@mantine/dates/styles.css";
 import { Footer } from "./components/Footer/Footer";
@@ -18,6 +18,16 @@ import { Body } from "./components/Main/Body";
 export const loader = async ({ request }: ActionFunctionArgs) => {
   const user = await getUser({ request } as ActionFunctionArgs);
   return { user };
+};
+
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: "icon",
+      href: "/favicon.svg",
+      type: "image/svg+xml",
+    },
+  ];
 };
 
 export default function App() {
