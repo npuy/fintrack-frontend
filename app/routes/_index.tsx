@@ -2,8 +2,8 @@ import { Welcome } from "~/components/Welcome/Welcome";
 
 export function meta() {
   return [
-    { title: "Mantine Remix App" },
-    { name: "description", content: "Welcome to Mantine!" },
+    { title: "FinTrack" },
+    { name: "description", content: "Welcome to FinTrack!" },
   ];
 }
 
