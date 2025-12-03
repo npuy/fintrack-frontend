@@ -11,6 +11,10 @@ import { getBudgetGroups } from "~/services/budget/budget";
 import { getCategoriesWithBalance } from "~/services/category/category";
 import { getCurrencies } from "~/services/currency/currency";
 
+export function meta() {
+  return [{ title: "Dashboard" }];
+}
+
 export async function loader({ request }: ActionFunctionArgs) {
   const token = await getToken({ request } as ActionFunctionArgs);
   const userCurrency = await getCurrency({ request } as ActionFunctionArgs);

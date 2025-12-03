@@ -12,6 +12,10 @@ import {
 import { getCategories } from "~/services/category/category";
 import { getCurrencies } from "~/services/currency/currency";
 
+export function meta() {
+  return [{ title: "Budget" }];
+}
+
 export async function action({ request, params }: ActionFunctionArgs) {
   const token = await getToken({ request } as ActionFunctionArgs);
   if (!(await userLoggedIn({ request } as ActionFunctionArgs)) || !token) {
