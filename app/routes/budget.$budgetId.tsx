@@ -22,10 +22,26 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return redirect("/");
   }
 
-  const formData = await request.formData();
   const budgetId = params.budgetId as string;
+  const formData = await request.formData();
 
-  const budgetData = validateBudgetData(budgetId, formData);
+  const result = validateBudgetData(formData);
+
+  if (!result.success) {
+    return {
+      errors: result.errors,
+      values: result.values,
+    };
+  }
+  const { name, limit, currency, categories } = result.data;
+
+  const budgetData = {
+    id: budgetId,
+    name,
+    limit,
+    currencyId: currency,
+    categoriesId: categories,
+  };
 
   if (budgetId == "new") {
     await createBudgetGroup({

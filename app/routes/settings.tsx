@@ -45,12 +45,13 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   const formData = await request.formData();
-  const { email, currencyId, name, payDay } = validateUpdateUserData({
-    email: formData.get("email"),
-    currencyId: formData.get("currency"),
-    name: formData.get("name"),
-    payDay: formData.get("payDay"),
-  });
+  const result = validateUpdateUserData(formData);
+
+  if (!result.success) {
+    return { errors: result.errors, values: result.values };
+  }
+
+  const { email, currency: currencyId, name, payDay } = result.data;
 
   // Update user data
   await updateUserData({

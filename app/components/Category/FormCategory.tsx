@@ -1,6 +1,7 @@
 import { Flex, Space, TextInput } from "@mantine/core";
-import { Form } from "@remix-run/react";
-import { ReactNode, useState } from "react";
+import { Form, useActionData } from "@remix-run/react";
+import { ReactNode } from "react";
+import { action } from "~/routes/categories.$categoryId";
 
 interface LoadData {
   name?: string;
@@ -13,46 +14,15 @@ export function FormCategory({
   children: ReactNode;
   loadData: LoadData;
 }) {
-  const [formValues, setFormValues] = useState({
-    name: loadData.name,
-  });
-
-  const [formErrors, setFormErrors] = useState({
-    name: false,
-  });
-
-  const handleChange = (
-    field: string,
-    value: string | null | Date | number
-  ) => {
-    setFormValues((values) => ({ ...values, [field]: value }));
-    setFormErrors((errors) => ({ ...errors, [field]: false }));
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent default form submission
-
-    const errors = {
-      name: !formValues.name,
-    };
-
-    setFormErrors(errors);
-
-    const hasErrors = Object.values(errors).some((error) => error);
-    if (!hasErrors) {
-      // Programmatically submit the form if no errors
-      event.currentTarget.submit();
-    }
-  };
+  const actionData = useActionData<typeof action>();
 
   return (
-    <Form method="post" onSubmit={handleSubmit}>
+    <Form method="post">
       <TextInput
         label="Name"
         name="name"
-        value={formValues.name}
-        onChange={(event) => handleChange("name", event.currentTarget.value)}
-        error={formErrors.name ? "This field is required" : null}
+        defaultValue={actionData?.values.name ?? loadData.name}
+        error={actionData?.errors.name}
       />
       <Space h="md" />
       <Flex justify="flex-end">{children}</Flex>

@@ -55,10 +55,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
   const accountId = params.accountId;
   const formData = await request.formData();
-  const { name, currencyId } = validateAccountData(
-    formData.get("name"),
-    formData.get("currency")
-  );
+
+  const result = validateAccountData(formData);
+
+  if (!result.success) {
+    return {
+      errors: result.errors,
+      values: result.values,
+    };
+  }
+  const { name, currency: currencyId } = result.data;
+
   if (accountId == "new") {
     // create account
     await createAccount({ request, name, currencyId } as ActionFunctionArgs & {

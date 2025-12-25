@@ -1,7 +1,10 @@
+import { ActionFunctionArgs } from "@remix-run/node";
+import { z } from "zod";
+
 import { Account, AccountWithBalance } from "~/types/account";
 import { getToken } from "~/services/authentication/middleware";
-import { ActionFunctionArgs } from "@remix-run/node";
 import { env } from "~/config/config";
+import { validateForm } from "~/utils/forms";
 
 export async function getAccountsWithBalance({
   request,
@@ -43,20 +46,17 @@ export async function getAccount({
   return (await response.json()) as Account;
 }
 
-export function validateAccountData(
-  name: FormDataEntryValue | null,
-  currency: FormDataEntryValue | null
-) {
-  if (
-    !name ||
-    typeof name !== "string" ||
-    !currency ||
-    typeof currency !== "string" ||
-    typeof Number(currency) !== "number"
-  ) {
-    throw new Error("Invalid account data");
-  }
-  return { name: name as string, currencyId: Number(currency) as number };
+const accountDataSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  currency: z.coerce.number().min(1, "Currency is required"),
+});
+
+export function validateAccountData(formData: FormData) {
+  const values = {
+    name: formData.get("name") as string,
+    currency: formData.get("currency") as string,
+  };
+  return validateForm(values, accountDataSchema);
 }
 
 export async function createAccount({

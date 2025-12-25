@@ -1,11 +1,13 @@
 import { Flex, NumberInput, Select, Space, TextInput } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { ReactNode, useState } from "react";
-import { loader } from "~/routes/transfer";
+import { action, loader } from "~/routes/transfer";
+import { toDateValue } from "~/utils/forms";
 
 export function FormTransfer({ children }: { children: ReactNode }) {
   const data = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
   const accountsSelectData = data.accounts.map((account) => ({
     value: account.id,
@@ -17,25 +19,19 @@ export function FormTransfer({ children }: { children: ReactNode }) {
   }));
 
   const [formValues, setFormValues] = useState({
-    description: "",
-    amount: "",
-    amountFrom: "",
-    amountTo: "",
-    date: new Date(),
-    accountFrom: "",
-    accountTo: "",
-    category: "",
+    amount: actionData?.values.amount || "",
+    amountFrom: actionData?.values.amountFrom || "",
+    amountTo: actionData?.values.amountTo || "",
+    accountFrom: actionData?.values.accountFrom || "",
+    accountTo: actionData?.values.accountTo || "",
   });
 
   const [formErrors, setFormErrors] = useState({
-    description: "",
-    amount: "",
-    amountFrom: "",
-    amountTo: "",
-    date: "",
-    accountFrom: "",
-    accountTo: "",
-    category: "",
+    amount: actionData?.errors.amount || "",
+    amountFrom: actionData?.errors.amountFrom || "",
+    amountTo: actionData?.errors.amountTo || "",
+    accountFrom: actionData?.errors.accountFrom || "",
+    accountTo: actionData?.errors.accountTo || "",
   });
 
   const [differentCurrencies, setDifferentCurrencies] = useState(false);
@@ -65,17 +61,17 @@ export function FormTransfer({ children }: { children: ReactNode }) {
       );
 
       if (accountFrom && accountTo) {
-        setDifferentCurrencies(false);
-        setFormErrors((errors) => ({
-          ...errors,
-          accountFrom: "",
-          accountTo: "",
-        }));
         if (accountFrom.id === accountTo.id) {
           setFormErrors((errors) => ({
             ...errors,
             accountFrom: "Account from and to cannot be the same",
             accountTo: "Account from and to cannot be the same",
+          }));
+        } else {
+          setFormErrors((errors) => ({
+            ...errors,
+            accountFrom: "",
+            accountTo: "",
           }));
         }
         if (accountFrom.currency.id !== accountTo.currency.id) {
@@ -88,6 +84,8 @@ export function FormTransfer({ children }: { children: ReactNode }) {
             ...values,
             amount: "",
           }));
+        } else {
+          setDifferentCurrencies(false);
         }
       }
     }
@@ -96,11 +94,8 @@ export function FormTransfer({ children }: { children: ReactNode }) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent default form submission
 
-    // Validate not empty fields
     const errors = {
-      description: !formValues.description
-        ? "Description is required"
-        : formErrors.description,
+      ...formErrors,
       amount:
         !formValues.amount && !differentCurrencies
           ? "Amount is required"
@@ -113,16 +108,6 @@ export function FormTransfer({ children }: { children: ReactNode }) {
         !formValues.amountTo && differentCurrencies
           ? "Amount to is required"
           : formErrors.amountTo,
-      date: !formValues.date ? "Date is required" : formErrors.date,
-      accountFrom: !formValues.accountFrom
-        ? "Account from is required"
-        : formErrors.accountFrom,
-      accountTo: !formValues.accountTo
-        ? "Account to is required"
-        : formErrors.accountTo,
-      category: !formValues.category
-        ? "Category is required"
-        : formErrors.category,
     };
 
     setFormErrors(errors);
@@ -157,11 +142,8 @@ export function FormTransfer({ children }: { children: ReactNode }) {
       <TextInput
         label="Description"
         name="description"
-        value={formValues.description}
-        onChange={(event) =>
-          handleChange("description", event.currentTarget.value)
-        }
-        error={formErrors.description ? formErrors.description : null}
+        defaultValue={actionData?.values.description}
+        error={actionData?.errors.description}
       />
       {differentCurrencies ? (
         <>
@@ -201,19 +183,16 @@ export function FormTransfer({ children }: { children: ReactNode }) {
       <DateInput
         label="Date"
         name="date"
-        value={formValues.date}
-        onChange={(value) => handleChange("date", value)}
         valueFormat="YYYY/MM/DD"
-        error={formErrors.date ? formErrors.date : null}
+        defaultValue={toDateValue(actionData?.values.date) ?? new Date()}
       />
       <Select
         label="Category"
         name="category"
         data={categoriesSelectData}
-        value={formValues.category}
-        onChange={(value) => handleChange("category", value)}
         nothingFoundMessage="Nothing found..."
-        error={formErrors.category ? formErrors.category : null}
+        defaultValue={actionData?.values.category}
+        error={actionData?.errors.category}
       />
       <Space h="md" />
       <Flex justify="flex-end">{children}</Flex>

@@ -1,9 +1,12 @@
+import { z } from "zod";
+
 import { env } from "~/config/config";
 import {
   BudgetGroup,
   BudgetGroupWithCategoriesAndAmount,
   UpdateBudgetGroupInput,
 } from "~/types/budget";
+import { parseMultiValue, validateForm } from "~/utils/forms";
 
 export async function getBudgetGroup({
   token,
@@ -35,24 +38,21 @@ export async function getBudgetGroup({
   return await response.json();
 }
 
-export function validateBudgetData(
-  budgetId: string,
-  formData: FormData
-): UpdateBudgetGroupInput {
-  const name = formData.get("name") as string;
-  const limit = Number(
-    (formData.get("limit") as string).replace(".", "").replace(",", ".")
-  );
-  const currencyId = Number(formData.get("currency"));
-  const categoriesId = (formData.get("categories") as string).split(",");
+const budgetDataSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  limit: z.coerce.number().min(1, "Limit is required"),
+  currency: z.coerce.number().min(1, "Currency is required"),
+  categories: z.array(z.string()).min(1, "At least one category is required"),
+});
 
-  return {
-    id: budgetId,
-    name,
-    limit,
-    currencyId,
-    categoriesId,
+export function validateBudgetData(formData: FormData) {
+  const values = {
+    name: formData.get("name") as string,
+    limit: formData.get("limit") as string,
+    currency: formData.get("currency") as string,
+    categories: parseMultiValue(formData.get("categories") as string),
   };
+  return validateForm(values, budgetDataSchema);
 }
 
 export async function createBudgetGroup({

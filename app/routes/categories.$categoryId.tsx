@@ -40,7 +40,18 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
   const categoryId = params.categoryId;
   const formData = await request.formData();
-  const { name } = validateCategoryData(formData.get("name"));
+
+  const result = validateCategoryData(formData);
+
+  if (!result.success) {
+    return {
+      errors: result.errors,
+      values: result.values,
+    };
+  }
+
+  const { name } = result.data;
+
   if (categoryId == "new") {
     // create category
     await createCategory({ request, name } as ActionFunctionArgs & {

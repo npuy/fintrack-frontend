@@ -7,6 +7,8 @@ import {
 } from "~/types/category";
 import { env } from "~/config/config";
 import { formatDateToYYYYMMDD } from "~/utils/dates";
+import { z } from "zod";
+import { validateForm } from "~/utils/forms";
 
 export async function getCategoriesWithBalance({
   request,
@@ -55,11 +57,15 @@ export async function getCategory({
   return (await response.json()) as Category;
 }
 
-export function validateCategoryData(name: FormDataEntryValue | null) {
-  if (!name || typeof name !== "string") {
-    throw new Error("Invalid category data");
-  }
-  return { name: name as string };
+const categoriesDataSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+});
+
+export function validateCategoryData(formData: FormData) {
+  const values = {
+    name: formData.get("name") as string,
+  };
+  return validateForm(values, categoriesDataSchema);
 }
 
 export async function createCategory({

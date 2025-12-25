@@ -1,38 +1,29 @@
+import { z } from "zod";
 import { ActionFunctionArgs } from "@remix-run/node";
+import { validateForm } from "~/utils/forms";
 import { env } from "~/config/config";
 import { getToken } from "../authentication/middleware";
 
-export function validateUpdateUserData({
-  email,
-  currencyId,
-  name,
-  payDay,
-}: {
-  email: FormDataEntryValue | null;
-  currencyId: FormDataEntryValue | null;
-  name: FormDataEntryValue | null;
-  payDay: FormDataEntryValue | null;
-}) {
-  if (
-    !email ||
-    !currencyId ||
-    !name ||
-    !payDay ||
-    typeof email !== "string" ||
-    typeof currencyId !== "string" ||
-    typeof name !== "string" ||
-    isNaN(Number(currencyId)) ||
-    typeof payDay !== "string" ||
-    isNaN(Number(payDay))
-  ) {
-    throw new Error("Invalid update user data");
-  }
-  return {
-    email: email as string,
-    currencyId: Number(currencyId),
-    name: name as string,
-    payDay: Number(payDay),
+const settingsDataSchema = z.object({
+  email: z.string().email("Invalid email address").min(1, "Email is required"),
+  currency: z.coerce.number().min(1, "Currency is required"),
+  name: z.string().min(1, "Name is required"),
+  payDay: z.coerce
+    .number()
+    .int()
+    .min(1, "Pay day is required")
+    .max(31, "Pay day must be between 1 and 31"),
+});
+
+export function validateUpdateUserData(formData: FormData) {
+  const values = {
+    email: formData.get("email"),
+    currency: formData.get("currency"),
+    name: formData.get("name"),
+    payDay: formData.get("payDay"),
   };
+
+  return validateForm(values, settingsDataSchema);
 }
 
 export async function updateUserData({

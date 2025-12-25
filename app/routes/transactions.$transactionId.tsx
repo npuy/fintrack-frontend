@@ -31,14 +31,19 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return redirect("/transactions");
   }
 
-  const transactionData: TransactionCreate = validateTransactionData(
-    formData.get("amount"),
-    formData.get("description"),
-    formData.get("date"),
-    formData.get("account"),
-    formData.get("category"),
-    formData.get("type")
-  );
+  const result = validateTransactionData(formData);
+
+  if (!result.success) {
+    return {
+      errors: result.errors,
+      values: result.values,
+    };
+  }
+  const transactionData: TransactionCreate = {
+    ...result.data,
+    accountId: result.data.account,
+    categoryId: result.data.category,
+  };
 
   if (transactionId == "new") {
     await createTransaction({
