@@ -1,32 +1,33 @@
-import { ActionFunctionArgs } from "@remix-run/node";
 import {
   FilterTransactionsInput,
   Transaction,
   TransactionCreate,
   TransactionFullResponse,
 } from "~/types/transaction";
-import { getToken } from "../authentication/middleware";
 import { env } from "~/config/config";
 import { formatDateToYYYYMMDD } from "~/utils/dates";
 import { z } from "zod";
 import { validateForm } from "~/utils/forms";
 
 export async function getTransactions({
-  request,
-}: ActionFunctionArgs): Promise<Transaction[]> {
+  token,
+}: {
+  token?: string;
+}): Promise<Transaction[]> {
   const response = await fetch(`${env.BACKEND_URL}/transaction`, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
   });
   return (await response.json()) as Transaction[];
 }
 
 export async function getTransactionsFull({
-  request,
+  token,
   queryParams,
-}: ActionFunctionArgs & {
+}: {
+  token?: string;
   queryParams?: string;
 }): Promise<TransactionFullResponse> {
   const response = await fetch(
@@ -34,8 +35,7 @@ export async function getTransactionsFull({
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          (await getToken({ request } as ActionFunctionArgs)) || "",
+        Authorization: token || "",
       },
     }
   );
@@ -46,16 +46,18 @@ export async function getTransactionsFull({
 }
 
 export async function getTransaction({
-  request,
+  token,
   transactionId,
-}: ActionFunctionArgs & { transactionId: string }): Promise<Transaction> {
+}: {
+  token?: string;
+  transactionId: string;
+}): Promise<Transaction> {
   const response = await fetch(
     `${env.BACKEND_URL}/transaction/${transactionId}`,
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          (await getToken({ request } as ActionFunctionArgs)) || "",
+        Authorization: token || "",
       },
     }
   );
@@ -120,42 +122,51 @@ export function validateTransferData(formData: FormData) {
 }
 
 export async function createTransaction({
-  request,
+  token,
   transactionData,
-}: ActionFunctionArgs & { transactionData: TransactionCreate }) {
+}: {
+  token?: string;
+  transactionData: TransactionCreate;
+}) {
   await fetch(`${env.BACKEND_URL}/transaction`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
     body: JSON.stringify(transactionData),
   });
 }
 
 export async function updateTransaction({
-  request,
+  token,
   transactionData,
-}: ActionFunctionArgs & { transactionData: TransactionCreate }) {
+}: {
+  token?: string;
+  transactionData: TransactionCreate;
+}) {
   await fetch(`${env.BACKEND_URL}/transaction/${transactionData.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
     body: JSON.stringify(transactionData),
   });
 }
 
 export async function deleteTransaction({
-  request,
+  token,
   transactionId,
-}: ActionFunctionArgs & { transactionId: string }) {
+}: {
+  token?: string;
+  transactionId: string;
+}) {
   await fetch(`${env.BACKEND_URL}/transaction/${transactionId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
   });
 }

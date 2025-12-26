@@ -12,7 +12,7 @@ export async function getBudgetGroup({
   token,
   budgetId,
 }: {
-  token: string;
+  token?: string;
   budgetId: string;
 }): Promise<BudgetGroupWithCategoriesAndAmount> {
   if (budgetId == "new") {
@@ -32,7 +32,7 @@ export async function getBudgetGroup({
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token,
+      Authorization: token || "",
     },
   });
   return await response.json();
@@ -59,14 +59,14 @@ export async function createBudgetGroup({
   token,
   budgetData,
 }: {
-  token: string;
+  token?: string;
   budgetData: UpdateBudgetGroupInput;
 }): Promise<BudgetGroup> {
   const response = await fetch(`${env.BACKEND_URL}/budget`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token,
+      Authorization: token || "",
     },
     body: JSON.stringify(budgetData),
   });
@@ -77,14 +77,14 @@ export async function updateBudgetGroup({
   token,
   budgetData,
 }: {
-  token: string;
+  token?: string;
   budgetData: UpdateBudgetGroupInput;
 }): Promise<BudgetGroup> {
   const response = await fetch(`${env.BACKEND_URL}/budget/${budgetData.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token,
+      Authorization: token || "",
     },
     body: JSON.stringify(budgetData),
   });
@@ -95,14 +95,14 @@ export async function deleteBudgetGroup({
   token,
   budgetId,
 }: {
-  token: string;
-  budgetId: string;
+  token?: string;
+  budgetId?: string;
 }): Promise<void> {
   await fetch(`${env.BACKEND_URL}/budget/${budgetId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token,
+      Authorization: token || "",
     },
   });
 }
@@ -110,13 +110,13 @@ export async function deleteBudgetGroup({
 export async function getBudgetGroups({
   token,
 }: {
-  token: string;
+  token?: string;
 }): Promise<BudgetGroupWithCategoriesAndAmount[]> {
   const response = await fetch(`${env.BACKEND_URL}/budget`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token,
+      Authorization: token || "",
     },
   });
   return await response.json();

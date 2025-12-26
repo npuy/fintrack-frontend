@@ -19,28 +19,21 @@ export function meta() {
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  const userCurrency = await getCurrency({ request } as ActionFunctionArgs);
-  const user = await getUser({ request } as ActionFunctionArgs);
-  if (
-    !(await userLoggedIn({ request } as ActionFunctionArgs)) ||
-    !userCurrency ||
-    !user
-  ) {
+  const userCurrency = await getCurrency(request);
+  const user = await getUser(request);
+  if (!(await userLoggedIn(request)) || !userCurrency || !user) {
     return redirect("/");
   }
 
-  const currencies = await getCurrencies({ request } as ActionFunctionArgs);
+  const token = await getToken(request);
+  const currencies = await getCurrencies({ token });
   return { currencies, userCurrency, user };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const user = await getUser({ request } as ActionFunctionArgs);
-  const authToken = await getToken({ request } as ActionFunctionArgs);
-  if (
-    !(await userLoggedIn({ request } as ActionFunctionArgs)) ||
-    !user ||
-    !authToken
-  ) {
+  const user = await getUser(request);
+  const authToken = await getToken(request);
+  if (!(await userLoggedIn(request)) || !user || !authToken) {
     return redirect("/");
   }
 

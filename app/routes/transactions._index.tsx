@@ -4,7 +4,7 @@ import FiltersTransaction from "~/components/Transaction/FiltersTransaction";
 import PaginationTransaction from "~/components/Transaction/PaginationTransaction";
 import TableTransactions from "~/components/Transaction/TableTransaction";
 import { getAccounts } from "~/services/account/account";
-import { userLoggedIn } from "~/services/authentication/middleware";
+import { getToken, userLoggedIn } from "~/services/authentication/middleware";
 import { getCategories } from "~/services/category/category";
 import { getCurrencies } from "~/services/currency/currency";
 import {
@@ -19,17 +19,14 @@ export function meta() {
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  if (!(await userLoggedIn(request))) {
     return redirect("/");
   }
 
-  const accounts = await getAccounts({
-    request,
-  } as ActionFunctionArgs);
-
-  const categories = await getCategories({ request } as ActionFunctionArgs);
-
-  const currencies = await getCurrencies({ request } as ActionFunctionArgs);
+  const token = await getToken(request);
+  const accounts = await getAccounts({ token });
+  const categories = await getCategories({ token });
+  const currencies = await getCurrencies({ token });
 
   const url = new URL(request.url);
   const filters = getFiltersFromUrl(url);
@@ -38,9 +35,9 @@ export async function loader({ request }: ActionFunctionArgs) {
 
   try {
     const transactionResponse = await getTransactionsFull({
-      request,
+      token,
       queryParams,
-    } as ActionFunctionArgs & { queryParams: string });
+    });
     return {
       transactions: transactionResponse.data,
       currencies,

@@ -16,21 +16,15 @@ export function meta() {
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  const token = await getToken({ request } as ActionFunctionArgs);
-  const userCurrency = await getCurrency({ request } as ActionFunctionArgs);
-  if (
-    !(await userLoggedIn({ request } as ActionFunctionArgs)) ||
-    !token ||
-    !userCurrency
-  ) {
+  const userCurrency = await getCurrency(request);
+  if (!(await userLoggedIn(request)) || !userCurrency) {
     return redirect("/");
   }
 
+  const token = await getToken(request);
   const budgetGroups = await getBudgetGroups({ token });
-  const currencies = await getCurrencies({ request } as ActionFunctionArgs);
-  const categories = await getCategoriesWithBalance({
-    request,
-  } as ActionFunctionArgs);
+  const currencies = await getCurrencies({ token });
+  const categories = await getCategoriesWithBalance({ token });
 
   return { budgetGroups, currencies, categories, userCurrency };
 }

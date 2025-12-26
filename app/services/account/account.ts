@@ -1,46 +1,51 @@
-import { ActionFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
 
 import { Account, AccountWithBalance } from "~/types/account";
-import { getToken } from "~/services/authentication/middleware";
 import { env } from "~/config/config";
 import { validateForm } from "~/utils/forms";
 
 export async function getAccountsWithBalance({
-  request,
-}: ActionFunctionArgs): Promise<AccountWithBalance[]> {
+  token,
+}: {
+  token?: string;
+}): Promise<AccountWithBalance[]> {
   const response = await fetch(`${env.BACKEND_URL}/account/balance`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
   });
   return (await response.json()) as AccountWithBalance[];
 }
 
 export async function getAccounts({
-  request,
-}: ActionFunctionArgs): Promise<Account[]> {
+  token,
+}: {
+  token?: string;
+}): Promise<Account[]> {
   const response = await fetch(`${env.BACKEND_URL}/account`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
   });
   return (await response.json()) as Account[];
 }
 
 export async function getAccount({
-  request,
+  token,
   accountId,
-}: ActionFunctionArgs & { accountId: string }): Promise<Account> {
+}: {
+  token?: string;
+  accountId: string;
+}): Promise<Account> {
   const response = await fetch(`${env.BACKEND_URL}/account/${accountId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
   });
   return (await response.json()) as Account;
@@ -60,26 +65,31 @@ export function validateAccountData(formData: FormData) {
 }
 
 export async function createAccount({
-  request,
+  token,
   name,
   currencyId,
-}: ActionFunctionArgs & { name: string; currencyId: number }) {
+}: {
+  token?: string;
+  name: string;
+  currencyId: number;
+}) {
   await fetch(`${env.BACKEND_URL}/account`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
     body: JSON.stringify({ name, currencyId }),
   });
 }
 
 export async function editAccount({
-  request,
+  token,
   name,
   accountId,
   currencyId,
-}: ActionFunctionArgs & {
+}: {
+  token?: string;
   name: string;
   accountId: string;
   currencyId: number;
@@ -88,21 +98,24 @@ export async function editAccount({
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
     body: JSON.stringify({ name, currencyId }),
   });
 }
 
 export async function deleteAccount({
-  request,
+  token,
   accountId,
-}: ActionFunctionArgs & { accountId: string }) {
+}: {
+  token?: string;
+  accountId: string;
+}) {
   await fetch(`${env.BACKEND_URL}/account/${accountId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
   });
 }

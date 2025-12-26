@@ -52,7 +52,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  if (await userLoggedIn({ request } as ActionFunctionArgs)) {
+  if (await userLoggedIn(request)) {
     return redirect("/");
   }
   return {};
