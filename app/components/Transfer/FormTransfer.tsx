@@ -122,6 +122,7 @@ export function FormTransfer({ children }: { children: ReactNode }) {
   return (
     <Form method="post" onSubmit={handleSubmit}>
       <Select
+        searchable
         label="Account from"
         name="accountFrom"
         data={accountsSelectData}
@@ -131,6 +132,7 @@ export function FormTransfer({ children }: { children: ReactNode }) {
         error={formErrors.accountFrom ? formErrors.accountFrom : null}
       />
       <Select
+        searchable
         label="Account to"
         name="accountTo"
         data={accountsSelectData}
@@ -187,6 +189,7 @@ export function FormTransfer({ children }: { children: ReactNode }) {
         defaultValue={toDateValue(actionData?.values.date) ?? new Date()}
       />
       <Select
+        searchable
         label="Category"
         name="category"
         data={categoriesSelectData}

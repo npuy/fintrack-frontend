@@ -32,6 +32,7 @@ export function FormAccount({
         error={actionData?.errors.name}
       />
       <Select
+        searchable
         label="Currency"
         name="currency"
         data={currenciesSelectData}

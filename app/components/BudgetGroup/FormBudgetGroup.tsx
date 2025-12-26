@@ -56,6 +56,7 @@ export function FormBudgetGroup({
         error={actionData?.errors.limit}
       />
       <Select
+        searchable
         label="Display currency"
         name="currency"
         data={currenciesSelectData}
@@ -64,6 +65,7 @@ export function FormBudgetGroup({
         error={actionData?.errors.currency}
       />
       <MultiSelect
+        searchable
         label="Categories"
         name="categories"
         data={categoriesSelectData}

@@ -42,6 +42,7 @@ export function FormSettings({ loadData }: { loadData: LoadData }) {
         error={actionData?.errors.email}
       />
       <Select
+        searchable
         label="Display currency"
         name="currency"
         description="Currency used to display amounts"
