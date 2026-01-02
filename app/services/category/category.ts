@@ -1,5 +1,3 @@
-import { getToken } from "~/services/authentication/middleware";
-import { ActionFunctionArgs } from "@remix-run/node";
 import {
   Category,
   CategoryFiltersInput,
@@ -7,11 +5,14 @@ import {
 } from "~/types/category";
 import { env } from "~/config/config";
 import { formatDateToYYYYMMDD } from "~/utils/dates";
+import { z } from "zod";
+import { validateForm } from "~/utils/forms";
 
 export async function getCategoriesWithBalance({
-  request,
+  token,
   queryParams,
-}: ActionFunctionArgs & {
+}: {
+  token?: string;
   queryParams?: string;
 }): Promise<CategoryWithBalance[]> {
   const response = await fetch(
@@ -20,8 +21,7 @@ export async function getCategoriesWithBalance({
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          (await getToken({ request } as ActionFunctionArgs)) || "",
+        Authorization: token || "",
       },
     }
   );
@@ -29,58 +29,71 @@ export async function getCategoriesWithBalance({
 }
 
 export async function getCategories({
-  request,
-}: ActionFunctionArgs): Promise<Category[]> {
+  token,
+}: {
+  token?: string;
+}): Promise<Category[]> {
   const response = await fetch(`${env.BACKEND_URL}/category`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
   });
   return (await response.json()) as CategoryWithBalance[];
 }
 
 export async function getCategory({
-  request,
+  token,
   categoryId,
-}: ActionFunctionArgs & { categoryId: string }): Promise<Category> {
+}: {
+  token?: string;
+  categoryId: string;
+}): Promise<Category> {
   const response = await fetch(`${env.BACKEND_URL}/category/${categoryId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
   });
   return (await response.json()) as Category;
 }
 
-export function validateCategoryData(name: FormDataEntryValue | null) {
-  if (!name || typeof name !== "string") {
-    throw new Error("Invalid category data");
-  }
-  return { name: name as string };
+const categoriesDataSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+});
+
+export function validateCategoryData(formData: FormData) {
+  const values = {
+    name: formData.get("name") as string,
+  };
+  return validateForm(values, categoriesDataSchema);
 }
 
 export async function createCategory({
-  request,
+  token,
   name,
-}: ActionFunctionArgs & { name: string }) {
+}: {
+  token?: string;
+  name: string;
+}) {
   await fetch(`${env.BACKEND_URL}/category`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
     body: JSON.stringify({ name }),
   });
 }
 
 export async function editCategory({
-  request,
+  token,
   name,
   categoryId,
-}: ActionFunctionArgs & {
+}: {
+  token?: string;
   name: string;
   categoryId: string;
 }) {
@@ -88,21 +101,24 @@ export async function editCategory({
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
     body: JSON.stringify({ name }),
   });
 }
 
 export async function deleteCategory({
-  request,
+  token,
   categoryId,
-}: ActionFunctionArgs & { categoryId: string }) {
+}: {
+  token?: string;
+  categoryId: string;
+}) {
   await fetch(`${env.BACKEND_URL}/category/${categoryId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
   });
 }

@@ -4,6 +4,7 @@ import { IconEdit } from "@tabler/icons-react";
 import { loader } from "~/routes/transactions._index";
 import { BalanceDisplay } from "../Balance/BalanceDisplay";
 import { TransactionType } from "~/types/transaction";
+import { formatYYYYMMDDToDDMMYYYY } from "~/utils/dates";
 
 export default function TableTransactions() {
   const data = useLoaderData<typeof loader>();
@@ -24,7 +25,7 @@ export default function TableTransactions() {
           Edit
         </Button>
       </Table.Td>
-      <Table.Td>{new Date(element.date).toLocaleDateString()}</Table.Td>
+      <Table.Td>{formatYYYYMMDDToDDMMYYYY(element.date)}</Table.Td>
       <Table.Td>{element.description}</Table.Td>
       <Table.Td>
         <BalanceDisplay

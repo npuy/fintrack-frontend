@@ -1,6 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { userLoggedIn } from "~/services/authentication/middleware";
+import { getToken, userLoggedIn } from "~/services/authentication/middleware";
 import NewAccount from "~/components/Account/NewAccount";
 import EditAccount from "~/components/Account/EditAccount";
 import {
@@ -17,10 +17,10 @@ export function meta() {
 }
 
 export async function loader({ request, params }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  const accountId = params.accountId;
+  if (!(await userLoggedIn(request)) || !accountId) {
     return redirect("/");
   }
-  const accountId = params.accountId;
   let account: AccountType = {
     id: "new",
     name: "",
@@ -37,11 +37,10 @@ export async function loader({ request, params }: ActionFunctionArgs) {
     createdAt: new Date("2000-01-01T00:00:00"),
     updatedAt: new Date("2000-01-01T00:00:00"),
   };
-  const currencies = await getCurrencies({ request } as ActionFunctionArgs);
+  const token = await getToken(request);
+  const currencies = await getCurrencies({ token });
   if (accountId != "new") {
-    account = await getAccount({ request, accountId } as ActionFunctionArgs & {
-      accountId: string;
-    });
+    account = await getAccount({ token, accountId });
   }
   return {
     account,
@@ -50,32 +49,33 @@ export async function loader({ request, params }: ActionFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  const accountId = params.accountId;
+  if (!(await userLoggedIn(request)) || !accountId) {
     return redirect("/");
   }
-  const accountId = params.accountId;
   const formData = await request.formData();
-  const { name, currencyId } = validateAccountData(
-    formData.get("name"),
-    formData.get("currency")
-  );
+
+  const result = validateAccountData(formData);
+
+  if (!result.success) {
+    return {
+      errors: result.errors,
+      values: result.values,
+    };
+  }
+  const { name, currency: currencyId } = result.data;
+
+  const token = await getToken(request);
   if (accountId == "new") {
     // create account
-    await createAccount({ request, name, currencyId } as ActionFunctionArgs & {
-      name: string;
-      currencyId: number;
-    });
+    await createAccount({ token, name, currencyId });
   } else {
     // edit account
     await editAccount({
-      request,
+      token,
       name,
       accountId,
       currencyId,
-    } as ActionFunctionArgs & {
-      name: string;
-      accountId: string;
-      currencyId: number;
     });
   }
   return redirect("/accounts");

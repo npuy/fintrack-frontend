@@ -17,16 +17,31 @@ export function meta() {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  const token = await getToken({ request } as ActionFunctionArgs);
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs)) || !token) {
+  const budgetId = params.budgetId;
+  if (!(await userLoggedIn(request)) || !budgetId) {
     return redirect("/");
   }
-
   const formData = await request.formData();
-  const budgetId = params.budgetId as string;
 
-  const budgetData = validateBudgetData(budgetId, formData);
+  const result = validateBudgetData(formData);
 
+  if (!result.success) {
+    return {
+      errors: result.errors,
+      values: result.values,
+    };
+  }
+  const { name, limit, currency, categories } = result.data;
+
+  const budgetData = {
+    id: budgetId,
+    name,
+    limit,
+    currencyId: currency,
+    categoriesId: categories,
+  };
+
+  const token = await getToken(request);
   if (budgetId == "new") {
     await createBudgetGroup({
       token,
@@ -42,17 +57,16 @@ export async function action({ request, params }: ActionFunctionArgs) {
 }
 
 export async function loader({ request, params }: ActionFunctionArgs) {
-  const token = await getToken({ request } as ActionFunctionArgs);
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs)) || !token) {
+  const budgetId = params.budgetId;
+  if (!(await userLoggedIn(request)) || !budgetId) {
     return redirect("/");
   }
-
-  const budgetId = params.budgetId as string;
+  const token = await getToken(request);
   const budgetGroup = await getBudgetGroup({ token, budgetId });
 
-  const currencies = await getCurrencies({ request } as ActionFunctionArgs);
+  const currencies = await getCurrencies({ token });
 
-  const categories = await getCategories({ request } as ActionFunctionArgs);
+  const categories = await getCategories({ token });
 
   return {
     budgetGroup,

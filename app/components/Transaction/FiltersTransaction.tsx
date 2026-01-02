@@ -68,6 +68,7 @@ export default function FiltersTransaction() {
             </Group>
             <Group gap="md">
               <Select
+                searchable
                 label="Account"
                 name="accountId"
                 data={accountsSelectData}
@@ -76,6 +77,7 @@ export default function FiltersTransaction() {
                 clearable
               />
               <Select
+                searchable
                 label="Category"
                 name="categoryId"
                 data={categoriesSelectData}
@@ -84,6 +86,7 @@ export default function FiltersTransaction() {
                 clearable
               />
               <Select
+                searchable
                 label="Type"
                 name="type"
                 data={data.typeSelectData}

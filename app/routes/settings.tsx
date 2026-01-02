@@ -12,58 +12,46 @@ import {
 import { getCurrencies } from "~/services/currency/currency";
 import { updateUserData, validateUpdateUserData } from "~/services/user/user";
 import { commitSession } from "~/sessions";
-import { SessionDataWithoutCurrency } from "~/types/session";
 
 export function meta() {
   return [{ title: "Settings" }];
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  const userCurrency = await getCurrency({ request } as ActionFunctionArgs);
-  const user = await getUser({ request } as ActionFunctionArgs);
-  if (
-    !(await userLoggedIn({ request } as ActionFunctionArgs)) ||
-    !userCurrency ||
-    !user
-  ) {
+  const userCurrency = await getCurrency(request);
+  const user = await getUser(request);
+  if (!(await userLoggedIn(request)) || !userCurrency || !user) {
     return redirect("/");
   }
 
-  const currencies = await getCurrencies({ request } as ActionFunctionArgs);
+  const token = await getToken(request);
+  const currencies = await getCurrencies({ token });
   return { currencies, userCurrency, user };
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const user = await getUser({ request } as ActionFunctionArgs);
-  const authToken = await getToken({ request } as ActionFunctionArgs);
-  if (
-    !(await userLoggedIn({ request } as ActionFunctionArgs)) ||
-    !user ||
-    !authToken
-  ) {
+  const user = await getUser(request);
+  const authToken = await getToken(request);
+  if (!(await userLoggedIn(request)) || !user || !authToken) {
     return redirect("/");
   }
 
   const formData = await request.formData();
-  const { email, currencyId, name, payDay } = validateUpdateUserData({
-    email: formData.get("email"),
-    currencyId: formData.get("currency"),
-    name: formData.get("name"),
-    payDay: formData.get("payDay"),
-  });
+  const result = validateUpdateUserData(formData);
+
+  if (!result.success) {
+    return { errors: result.errors, values: result.values };
+  }
+
+  const { email, currency: currencyId, name, payDay } = result.data;
 
   // Update user data
   await updateUserData({
-    request,
+    token: authToken,
     email,
     currencyId,
     name,
     payDay,
-  } as ActionFunctionArgs & {
-    email: string;
-    currencyId: number;
-    name: string;
-    payDay: number;
   });
 
   // Update session data
@@ -77,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
       user: user,
       authToken: authToken,
     },
-  } as ActionFunctionArgs & { sessionData: SessionDataWithoutCurrency });
+  });
 
   return redirect("/", {
     headers: {

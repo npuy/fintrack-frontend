@@ -17,7 +17,6 @@ import {
   setSessionData,
   validateRegisterData,
 } from "~/services/authentication/auth";
-import { SessionDataWithoutCurrency } from "~/types/session";
 
 export function meta() {
   return [{ title: "Register" }];
@@ -38,7 +37,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const session = await setSessionData({
       request,
       sessionData,
-    } as ActionFunctionArgs & { sessionData: SessionDataWithoutCurrency });
+    });
 
     return redirect("/", {
       headers: {
@@ -52,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  if (await userLoggedIn({ request } as ActionFunctionArgs)) {
+  if (await userLoggedIn(request)) {
     return redirect("/");
   }
   return {};

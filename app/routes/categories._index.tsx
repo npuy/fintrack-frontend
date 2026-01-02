@@ -13,6 +13,7 @@ import { BalanceDisplay } from "~/components/Balance/BalanceDisplay";
 import FiltersCategory from "~/components/Category/FiltersCategory";
 import {
   getCurrency,
+  getToken,
   userLoggedIn,
 } from "~/services/authentication/middleware";
 import {
@@ -26,11 +27,8 @@ export function meta() {
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  const userCurrency = await getCurrency({ request } as ActionFunctionArgs);
-  if (
-    !(await userLoggedIn({ request } as ActionFunctionArgs)) ||
-    !userCurrency
-  ) {
+  const userCurrency = await getCurrency(request);
+  if (!(await userLoggedIn(request)) || !userCurrency) {
     return redirect("/");
   }
 
@@ -39,11 +37,10 @@ export async function loader({ request }: ActionFunctionArgs) {
 
   const queryParams = url.searchParams.toString();
 
+  const token = await getToken(request);
   const categories = await getCategoriesWithBalance({
-    request,
+    token,
     queryParams,
-  } as ActionFunctionArgs & {
-    queryParams: string;
   });
   return { categories, userCurrency, filters };
 }
