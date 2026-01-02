@@ -4,7 +4,7 @@ import { deleteBudgetGroup } from "~/services/budget/budget";
 
 export async function action({ request, params }: ActionFunctionArgs) {
   const budgetId = params.budgetId;
-  if (!((await userLoggedIn(request)) || !budgetId)) {
+  if (!(await userLoggedIn(request)) || !budgetId) {
     return redirect("/");
   }
 

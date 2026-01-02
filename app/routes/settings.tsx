@@ -12,7 +12,6 @@ import {
 import { getCurrencies } from "~/services/currency/currency";
 import { updateUserData, validateUpdateUserData } from "~/services/user/user";
 import { commitSession } from "~/sessions";
-import { SessionDataWithoutCurrency } from "~/types/session";
 
 export function meta() {
   return [{ title: "Settings" }];
@@ -48,16 +47,11 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // Update user data
   await updateUserData({
-    request,
+    token: authToken,
     email,
     currencyId,
     name,
     payDay,
-  } as ActionFunctionArgs & {
-    email: string;
-    currencyId: number;
-    name: string;
-    payDay: number;
   });
 
   // Update session data
@@ -71,7 +65,7 @@ export async function action({ request }: ActionFunctionArgs) {
       user: user,
       authToken: authToken,
     },
-  } as ActionFunctionArgs & { sessionData: SessionDataWithoutCurrency });
+  });
 
   return redirect("/", {
     headers: {

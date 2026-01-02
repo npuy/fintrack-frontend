@@ -10,7 +10,6 @@ export default function TableTransactions() {
   const data = useLoaderData<typeof loader>();
 
   const elements = data.transactions;
-  console.log({ elements });
   const currencies = data.currencies;
   const currenciesDict = Object.fromEntries(
     currencies.map(({ id, ...rest }) => [id, rest])

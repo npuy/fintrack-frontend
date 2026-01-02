@@ -57,9 +57,7 @@ export function FormSettings({ loadData }: { loadData: LoadData }) {
         description="Day of the month when you receive your salary"
         min={1}
         max={31}
-        defaultValue={
-          actionData?.values.payDay ? actionData.values.payDay : loadData.payDay
-        }
+        defaultValue={actionData?.values.payDay ?? loadData.payDay}
         error={actionData?.errors.payDay}
       />
       <Space h="md" />

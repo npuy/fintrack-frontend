@@ -17,7 +17,6 @@ import {
   setSessionData,
   validateLoginData,
 } from "~/services/authentication/auth";
-import { SessionDataWithoutCurrency } from "~/types/session";
 
 export function meta() {
   return [{ title: "Login" }];
@@ -37,7 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const session = await setSessionData({
       request,
       sessionData,
-    } as ActionFunctionArgs & { sessionData: SessionDataWithoutCurrency });
+    });
 
     return redirect("/", {
       headers: {

@@ -1,8 +1,6 @@
 import { z } from "zod";
-import { ActionFunctionArgs } from "@remix-run/node";
 import { validateForm } from "~/utils/forms";
 import { env } from "~/config/config";
-import { getToken } from "../authentication/middleware";
 
 const settingsDataSchema = z.object({
   email: z.string().email("Invalid email address").min(1, "Email is required"),
@@ -27,12 +25,13 @@ export function validateUpdateUserData(formData: FormData) {
 }
 
 export async function updateUserData({
-  request,
+  token,
   email,
   currencyId,
   name,
   payDay,
-}: ActionFunctionArgs & {
+}: {
+  token?: string;
   email: string;
   currencyId: number;
   name: string;
@@ -42,7 +41,7 @@ export async function updateUserData({
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: (await getToken({ request } as ActionFunctionArgs)) || "",
+      Authorization: token || "",
     },
     body: JSON.stringify({ email, currencyId, name, payDay }),
   });
