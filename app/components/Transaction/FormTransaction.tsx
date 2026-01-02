@@ -58,6 +58,7 @@ export function FormTransaction({
         error={actionData?.errors.date}
       />
       <Select
+        searchable
         label="Account"
         name="account"
         data={accountsSelectData}
@@ -66,6 +67,7 @@ export function FormTransaction({
         error={actionData?.errors.account}
       />
       <Select
+        searchable
         label="Category"
         name="category"
         data={categoriesSelectData}
@@ -74,6 +76,7 @@ export function FormTransaction({
         error={actionData?.errors.category}
       />
       <Select
+        searchable
         label="Type"
         name="type"
         data={data.typeSelectData}
