@@ -1,75 +1,83 @@
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import NewTransfer from "~/components/Transfer/NewTransfer";
 import { getAccounts } from "~/services/account/account";
-import { userLoggedIn } from "~/services/authentication/middleware";
+import { getToken, userLoggedIn } from "~/services/authentication/middleware";
 import { getCategories } from "~/services/category/category";
 import {
   createTransaction,
-  validateTransactionData,
+  validateTransferData,
 } from "~/services/transaction/transaction";
-import { TransactionCreate } from "~/types/transaction";
-import { typeSelectData } from "~/types/transactionType";
+import { TransactionCreate, TransactionType } from "~/types/transaction";
 
 export function meta() {
   return [{ title: "Transfer" }];
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  if (!(await userLoggedIn(request))) {
     return redirect("/");
   }
 
   const formData = await request.formData();
 
-  const amount = formData.get("amount");
-  let amountForm, amountTo;
-  if (amount) {
-    amountForm = amount;
-    amountTo = amount;
-  } else {
-    amountForm = formData.get("amountFrom");
-    amountTo = formData.get("amountTo");
+  const result = validateTransferData(formData);
+
+  if (!result.success) {
+    return {
+      errors: result.errors,
+      values: result.values,
+    };
   }
 
-  const transactionFromData = validateTransactionData(
-    amountForm,
-    formData.get("description"),
-    formData.get("date"),
-    formData.get("accountFrom"),
-    formData.get("category"),
-    typeSelectData[1].value
-  );
+  let amountForm, amountTo;
+  if (result.data.amount) {
+    amountForm = result.data.amount;
+    amountTo = result.data.amount;
+  } else {
+    amountForm = result.data.amountFrom;
+    amountTo = result.data.amountTo;
+  }
 
-  const transactionToData = validateTransactionData(
-    amountTo,
-    formData.get("description"),
-    formData.get("date"),
-    formData.get("accountTo"),
-    formData.get("category"),
-    typeSelectData[0].value
-  );
+  const transactionFromData: TransactionCreate = {
+    amount: amountForm!,
+    description: result.data.description,
+    date: result.data.date,
+    accountId: result.data.accountFrom,
+    categoryId: result.data.category,
+    type: TransactionType.Expense,
+  };
 
+  const transactionToData: TransactionCreate = {
+    amount: amountTo!,
+    description: result.data.description,
+    date: result.data.date,
+    accountId: result.data.accountTo,
+    categoryId: result.data.category,
+    type: TransactionType.Income,
+  };
+
+  const token = await getToken(request);
   await createTransaction({
-    request,
+    token,
     transactionData: transactionFromData,
-  } as ActionFunctionArgs & { transactionData: TransactionCreate });
+  });
   await createTransaction({
-    request,
+    token,
     transactionData: transactionToData,
-  } as ActionFunctionArgs & { transactionData: TransactionCreate });
+  });
   return redirect("/transactions");
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  if (!(await userLoggedIn(request))) {
     return redirect("/");
   }
 
+  const token = await getToken(request);
   const accounts = await getAccounts({
-    request,
-  } as ActionFunctionArgs);
-
-  const categories = await getCategories({ request } as ActionFunctionArgs);
+    token,
+  });
+  const categories = await getCategories({ token });
 
   return {
     accounts,

@@ -6,9 +6,10 @@ import {
   Space,
   TextInput,
 } from "@mantine/core";
-import { Form, useLoaderData } from "@remix-run/react";
-import { ReactNode, useState } from "react";
-import { loader } from "~/routes/budget.$budgetId";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { ReactNode } from "react";
+import { action, loader } from "~/routes/budget.$budgetId";
+import { toMultiValue } from "~/utils/forms";
 
 interface LoadData {
   name?: string;
@@ -25,6 +26,7 @@ export function FormBudgetGroup({
   loadData: LoadData;
 }) {
   const data = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
 
   const currenciesSelectData = data.currencies.map((currency) => ({
     value: String(currency.id),
@@ -35,89 +37,43 @@ export function FormBudgetGroup({
     label: category.name,
   }));
 
-  const [formValues, setFormValues] = useState({
-    name: loadData.name,
-    limit: loadData.limit,
-    currency: loadData.currency,
-    categories: loadData.categories,
-  });
-
-  const [formErrors, setFormErrors] = useState<{
-    name: string | null;
-    limit: string | null;
-    currency: string | null;
-    categories: string | null;
-  }>({
-    name: null,
-    limit: null,
-    currency: null,
-    categories: null,
-  });
-
-  const handleChange = (
-    field: string,
-    value: string | null | number | string[]
-  ) => {
-    setFormValues((values) => ({ ...values, [field]: value }));
-    setFormErrors((errors) => ({ ...errors, [field]: null }));
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent default form submission
-
-    const errors = {
-      name: !formValues.name ? "This field is required" : null,
-      limit: !formValues.limit ? "This field is required" : null,
-      currency: !formValues.currency ? "This field is required" : null,
-      categories: !formValues.categories ? "This field is required" : null,
-    };
-
-    setFormErrors(errors);
-
-    const hasErrors = Object.values(errors).some((error) => error);
-    if (!hasErrors) {
-      // Programmatically submit the form if no errors
-      event.currentTarget.submit();
-    }
-  };
-
   return (
-    <Form method="post" onSubmit={handleSubmit}>
+    <Form method="post">
       <TextInput
         label="Name"
         name="name"
-        value={formValues.name}
-        onChange={(event) => handleChange("name", event.currentTarget.value)}
-        error={formErrors.name}
+        defaultValue={actionData?.values.name ?? loadData.name}
+        error={actionData?.errors.name}
       />
       <NumberInput
         label="Limit"
         name="limit"
         description="Maximum amount allowed to spend"
         decimalScale={2}
-        value={formValues.limit}
-        onChange={(value) => handleChange("limit", value)}
         decimalSeparator=","
         thousandSeparator="."
-        error={formErrors.limit}
+        defaultValue={actionData?.values.limit ?? loadData.limit}
+        error={actionData?.errors.limit}
       />
       <Select
+        searchable
         label="Display currency"
         name="currency"
         data={currenciesSelectData}
-        value={formValues.currency}
-        onChange={(value) => handleChange("currency", value)}
         nothingFoundMessage="Nothing found..."
-        error={formErrors.currency}
+        defaultValue={actionData?.values.currency ?? loadData.currency}
+        error={actionData?.errors.currency}
       />
       <MultiSelect
+        searchable
         label="Categories"
         name="categories"
         data={categoriesSelectData}
-        value={formValues.categories}
-        onChange={(value) => handleChange("categories", value)}
         nothingFoundMessage="Nothing found..."
-        error={formErrors.categories}
+        defaultValue={
+          toMultiValue(actionData?.values.categories) ?? loadData.categories
+        }
+        error={actionData?.errors.categories}
       />
       <Space h="md" />
       <Flex justify="flex-end">{children}</Flex>

@@ -1,7 +1,7 @@
 import { User } from "~/types/user";
 import { env } from "~/config/config";
 import { SessionDataWithoutCurrency } from "~/types/session";
-import { ActionFunctionArgs, Session } from "@remix-run/node";
+import { Session } from "@remix-run/node";
 import { getSession } from "~/sessions";
 import { Currency } from "~/types/account";
 
@@ -108,7 +108,8 @@ export function validateRegisterData(
 export async function setSessionData({
   request,
   sessionData,
-}: ActionFunctionArgs & {
+}: {
+  request: Request;
   sessionData: SessionDataWithoutCurrency;
 }): Promise<Session> {
   const response = await fetch(

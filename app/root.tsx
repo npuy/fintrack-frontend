@@ -16,7 +16,7 @@ import { Footer } from "./components/Footer/Footer";
 import { Body } from "./components/Main/Body";
 
 export const loader = async ({ request }: ActionFunctionArgs) => {
-  const user = await getUser({ request } as ActionFunctionArgs);
+  const user = await getUser(request);
   return { user };
 };
 

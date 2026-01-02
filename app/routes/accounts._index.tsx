@@ -13,19 +13,18 @@ import { IconEdit } from "@tabler/icons-react";
 import { BalanceDisplay } from "~/components/Balance/BalanceDisplay";
 import NewButton from "~/components/Buttons/NewButton";
 import { getAccountsWithBalance } from "~/services/account/account";
-import { userLoggedIn } from "~/services/authentication/middleware";
+import { getToken, userLoggedIn } from "~/services/authentication/middleware";
 
 export function meta() {
   return [{ title: "Accounts" }];
 }
 
 export async function loader({ request }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  if (!(await userLoggedIn(request))) {
     return redirect("/");
   }
-  const accounts = await getAccountsWithBalance({
-    request,
-  } as ActionFunctionArgs);
+  const token = await getToken(request);
+  const accounts = await getAccountsWithBalance({ token });
   return { accounts };
 }
 

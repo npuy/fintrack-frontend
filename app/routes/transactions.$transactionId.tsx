@@ -1,6 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { userLoggedIn } from "~/services/authentication/middleware";
+import { getToken, userLoggedIn } from "~/services/authentication/middleware";
 import NewTransaction from "~/components/Transaction/NewTransaction";
 import EditTransaction from "~/components/Transaction/EditTransaction";
 import { getAccounts } from "~/services/account/account";
@@ -22,7 +22,7 @@ export function meta() {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  if (!(await userLoggedIn(request))) {
     return redirect("/");
   }
   const formData = await request.formData();
@@ -31,42 +31,49 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return redirect("/transactions");
   }
 
-  const transactionData: TransactionCreate = validateTransactionData(
-    formData.get("amount"),
-    formData.get("description"),
-    formData.get("date"),
-    formData.get("account"),
-    formData.get("category"),
-    formData.get("type")
-  );
+  const result = validateTransactionData(formData);
 
+  if (!result.success) {
+    return {
+      errors: result.errors,
+      values: result.values,
+    };
+  }
+  const transactionData: TransactionCreate = {
+    ...result.data,
+    accountId: result.data.account,
+    categoryId: result.data.category,
+  };
+
+  const token = await getToken(request);
   if (transactionId == "new") {
     await createTransaction({
-      request,
+      token,
       transactionData,
-    } as ActionFunctionArgs & { transactionData: TransactionCreate });
+    });
   } else {
     transactionData.id = transactionId;
     await updateTransaction({
-      request,
+      token,
       transactionData,
-    } as ActionFunctionArgs & { transactionId: string; transactionData: TransactionCreate });
+    });
   }
   return redirect("/transactions");
 }
 
 export async function loader({ request, params }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  const transactionId = params.transactionId;
+  if (!(await userLoggedIn(request)) || !transactionId) {
     return redirect("/");
   }
 
+  const token = await getToken(request);
   const accounts = await getAccounts({
-    request,
-  } as ActionFunctionArgs);
+    token,
+  });
 
-  const categories = await getCategories({ request } as ActionFunctionArgs);
+  const categories = await getCategories({ token });
 
-  const transactionId = params.transactionId;
   let transaction: TransactionType = {
     id: "new",
     amount: 0,
@@ -80,9 +87,9 @@ export async function loader({ request, params }: ActionFunctionArgs) {
   };
   if (transactionId != "new") {
     transaction = await getTransaction({
-      request,
+      token,
       transactionId,
-    } as ActionFunctionArgs & { transactionId: string });
+    });
   }
   return {
     transaction,

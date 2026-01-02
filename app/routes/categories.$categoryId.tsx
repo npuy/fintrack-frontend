@@ -1,6 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import { userLoggedIn } from "~/services/authentication/middleware";
+import { getToken, userLoggedIn } from "~/services/authentication/middleware";
 import NewCategory from "~/components/Category/NewCategory";
 import EditCategory from "~/components/Category/EditCategory";
 import {
@@ -15,18 +15,18 @@ export function meta() {
 }
 
 export async function loader({ request, params }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  const categoryId = params.categoryId;
+  if (!(await userLoggedIn(request)) || !categoryId) {
     return redirect("/");
   }
-  const categoryId = params.categoryId;
+
   let category = { name: "", id: "new" };
+  const token = await getToken(request);
   if (categoryId != "new") {
     // get category
     category = await getCategory({
-      request,
+      token,
       categoryId,
-    } as ActionFunctionArgs & {
-      categoryId: string;
     });
   }
   return {
@@ -35,23 +35,31 @@ export async function loader({ request, params }: ActionFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  const categoryId = params.categoryId;
+  if (!(await userLoggedIn(request)) || !categoryId) {
     return redirect("/");
   }
-  const categoryId = params.categoryId;
+
   const formData = await request.formData();
-  const { name } = validateCategoryData(formData.get("name"));
+
+  const result = validateCategoryData(formData);
+
+  if (!result.success) {
+    return {
+      errors: result.errors,
+      values: result.values,
+    };
+  }
+
+  const { name } = result.data;
+
+  const token = await getToken(request);
   if (categoryId == "new") {
     // create category
-    await createCategory({ request, name } as ActionFunctionArgs & {
-      name: string;
-    });
+    await createCategory({ token, name });
   } else {
     // edit category
-    await editCategory({ request, categoryId, name } as ActionFunctionArgs & {
-      categoryId: string;
-      name: string;
-    });
+    await editCategory({ token, categoryId, name });
   }
   return redirect("/categories");
 }

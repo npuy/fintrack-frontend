@@ -3,12 +3,12 @@ import { getToken, userLoggedIn } from "~/services/authentication/middleware";
 import { deleteBudgetGroup } from "~/services/budget/budget";
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  const token = await getToken({ request } as ActionFunctionArgs);
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs)) || !token) {
+  const budgetId = params.budgetId;
+  if (!(await userLoggedIn(request)) || !budgetId) {
     return redirect("/");
   }
 
-  const budgetId = params.budgetId as string;
+  const token = await getToken(request);
   await deleteBudgetGroup({ token, budgetId });
   return redirect("/dashboard");
 }

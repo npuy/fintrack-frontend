@@ -1,14 +1,13 @@
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
 import { deleteCategory } from "~/services/category/category";
-import { userLoggedIn } from "~/services/authentication/middleware";
+import { getToken, userLoggedIn } from "~/services/authentication/middleware";
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  if (!(await userLoggedIn({ request } as ActionFunctionArgs))) {
+  const categoryId = params.categoryId;
+  if (!(await userLoggedIn(request)) || !categoryId) {
     return redirect("/");
   }
-  const categoryId = params.categoryId;
-  await deleteCategory({ request, categoryId } as ActionFunctionArgs & {
-    categoryId: string;
-  });
+  const token = await getToken(request);
+  await deleteCategory({ token, categoryId });
   return redirect("/categories");
 }
