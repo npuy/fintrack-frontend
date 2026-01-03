@@ -8,12 +8,14 @@ type SessionFlashData = {
   error: string;
 };
 
+const MAX_AGE = 60 * 60 * 24 * 7; // 7 days in seconds
+
 const { getSession, commitSession, destroySession } =
   createCookieSessionStorage<SessionData, SessionFlashData>({
     cookie: {
       name: "__session",
       httpOnly: true,
-      maxAge: 60 * 60,
+      maxAge: MAX_AGE,
       path: "/",
       sameSite: "lax",
       secrets: [env.SESSION_SECRET],
