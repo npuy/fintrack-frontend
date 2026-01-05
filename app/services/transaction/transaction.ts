@@ -8,6 +8,7 @@ import { env } from "~/config/config";
 import { formatDateToYYYYMMDD } from "~/utils/dates";
 import { z } from "zod";
 import { validateForm } from "~/utils/forms";
+import { parseAmount } from "~/utils/amount";
 
 export async function getTransactions({
   token,
@@ -75,7 +76,7 @@ const transactionDataSchema = z.object({
 
 export function validateTransactionData(formData: FormData) {
   const values = {
-    amount: formData.get("amount"),
+    amount: parseAmount(formData.get("amount")),
     description: formData.get("description"),
     date: formData.get("date"),
     account: formData.get("account"),
@@ -108,14 +109,14 @@ const transferDataSchema = z.object({
 
 export function validateTransferData(formData: FormData) {
   const values = {
-    amount: formData.get("amount"),
+    amount: parseAmount(formData.get("amount")),
     description: formData.get("description"),
     date: formData.get("date"),
     accountFrom: formData.get("accountFrom"),
     accountTo: formData.get("accountTo"),
     category: formData.get("category"),
-    amountFrom: formData.get("amountFrom"),
-    amountTo: formData.get("amountTo"),
+    amountFrom: parseAmount(formData.get("amountFrom")),
+    amountTo: parseAmount(formData.get("amountTo")),
   };
 
   return validateForm(values, transferDataSchema);

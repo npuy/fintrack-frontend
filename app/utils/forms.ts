@@ -34,8 +34,10 @@ export function validateForm<T extends z.ZodRawShape>(
   };
 }
 
-export function toMultiValue(value: PrimitiveFormValue | undefined): string[] {
-  if (!value) return [];
+export function toMultiValue(
+  value: PrimitiveFormValue | undefined
+): string[] | null {
+  if (!value) return null;
   return Array.isArray(value) ? value : [value];
 }
 
