@@ -55,7 +55,6 @@ export function validateBudgetData(formData: FormData) {
     currency: formData.get("currency") as string,
     categories: parseMultiValue(formData.get("categories") as string),
   };
-  console.log(values);
   return validateForm(values, budgetDataSchema);
 }
 
