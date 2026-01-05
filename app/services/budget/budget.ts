@@ -6,6 +6,7 @@ import {
   BudgetGroupWithCategoriesAndAmount,
   UpdateBudgetGroupInput,
 } from "~/types/budget";
+import { parseAmount } from "~/utils/amount";
 import { parseMultiValue, validateForm } from "~/utils/forms";
 
 export async function getBudgetGroup({
@@ -42,16 +43,19 @@ const budgetDataSchema = z.object({
   name: z.string().min(1, "Name is required"),
   limit: z.coerce.number().min(1, "Limit is required"),
   currency: z.coerce.number().min(1, "Currency is required"),
-  categories: z.array(z.string()).min(1, "At least one category is required"),
+  categories: z
+    .array(z.string().min(1, "At least one category is required"))
+    .min(1, "At least one category is required"),
 });
 
 export function validateBudgetData(formData: FormData) {
   const values = {
     name: formData.get("name") as string,
-    limit: formData.get("limit") as string,
+    limit: parseAmount(formData.get("limit") as string),
     currency: formData.get("currency") as string,
     categories: parseMultiValue(formData.get("categories") as string),
   };
+  console.log(values);
   return validateForm(values, budgetDataSchema);
 }
 
