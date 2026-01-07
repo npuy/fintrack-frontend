@@ -6,7 +6,7 @@ export function formatAmount(amount: number) {
 }
 
 export function parseAmount(amount: FormDataEntryValue | null) {
-  if (!amount) return 0;
+  if (!amount) return null;
   const normalized = amount.toString().replace(".", "").replace(",", ".");
   return normalized;
 }
