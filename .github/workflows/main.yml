@@ -35,8 +35,10 @@ jobs:
       # 4️⃣ Install cloudflared
       - name: Install cloudflared
         run: |
-          curl -fsSL https://pkg.cloudflare.com/cloudflared-linux-amd64.deb -o cloudflared.deb
-          sudo dpkg -i cloudflared.deb
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 \
+            -o cloudflared
+          chmod +x cloudflared
+          sudo mv cloudflared /usr/local/bin/cloudflared
 
       # 5️⃣ Setup SSH with private key stored in GitHub secrets
       - name: Setup SSH
