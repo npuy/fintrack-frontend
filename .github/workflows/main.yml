@@ -58,10 +58,7 @@ jobs:
           cat << 'EOF' > ~/.ssh/config
           Host ssh.nicolaspereira.me
             User deployer
-            ProxyCommand cloudflared access ssh \
-              --hostname %h \
-              --id $CF_ACCESS_CLIENT_ID \
-              --secret $CF_ACCESS_CLIENT_SECRET
+            ProxyCommand cloudflared access ssh --hostname %h --id $CF_ACCESS_CLIENT_ID --secret $CF_ACCESS_CLIENT_SECRET
           EOF
 
           chmod 600 ~/.ssh/config
