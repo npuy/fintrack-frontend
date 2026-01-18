@@ -46,11 +46,8 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 6️⃣ Configure SSH (Cloudflare Zero Trust)
-      - name: Configure SSH via Cloudflare Access
-        env:
-          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
-          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+      # 6️⃣ Configure SSH (Cloudflare Tunnel)
+      - name: Configure SSH via Cloudflare Tunnel
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
@@ -58,7 +55,8 @@ jobs:
           cat << 'EOF' > ~/.ssh/config
           Host ssh.nicolaspereira.me
             User deployer
-            ProxyCommand cloudflared access ssh --hostname %h --id $CF_ACCESS_CLIENT_ID --secret $CF_ACCESS_CLIENT_SECRET
+            ProxyCommand cloudflared ssh --hostname %h
+            StrictHostKeyChecking no
           EOF
 
           chmod 600 ~/.ssh/config
