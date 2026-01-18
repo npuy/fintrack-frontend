@@ -55,7 +55,7 @@ jobs:
           cat << 'EOF' > ~/.ssh/config
           Host ssh.nicolaspereira.me
             User deployer
-            ProxyCommand cloudflared ssh --hostname %h
+            ProxyCommand cloudflared access ssh --hostname %h
             StrictHostKeyChecking no
           EOF
 
