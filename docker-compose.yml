@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build: .
+    restart: unless-stopped
+    network_mode: host
+    # env_file sets container-level env vars so remix-serve sees PORT at startup.
+    # The volume mount makes the same file available for process.loadEnvFile().
+    env_file: ./.env
+    volumes:
+      - ./.env:/app/.env:ro
