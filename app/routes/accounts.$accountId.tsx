@@ -26,6 +26,8 @@ export async function loader({ request, params }: ActionFunctionArgs) {
     name: "",
     userId: "",
     currencyId: 1,
+    enabled: true,
+    sortOrder: 0,
     currency: {
       id: 1,
       name: "",
