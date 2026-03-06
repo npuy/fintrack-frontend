@@ -13,6 +13,8 @@ export interface Account {
   currencyId: number;
   currency: Currency;
   userId: string;
+  enabled: boolean;
+  sortOrder: number;
   createdAt: Date;
   updatedAt: Date;
 }

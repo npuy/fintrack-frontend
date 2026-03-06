@@ -104,6 +104,32 @@ export async function editAccount({
   });
 }
 
+export async function toggleAccount({
+  token,
+  accountId,
+  name,
+  currencyId,
+  enabled,
+}: {
+  token?: string;
+  accountId: string;
+  name: string;
+  currencyId: number;
+  enabled: boolean;
+}) {
+  const response = await fetch(`${env.BACKEND_URL}/account/${accountId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token || "",
+    },
+    body: JSON.stringify({ name, currencyId, enabled }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to toggle account");
+  }
+}
+
 export async function deleteAccount({
   token,
   accountId,
@@ -118,4 +144,19 @@ export async function deleteAccount({
       Authorization: token || "",
     },
   });
+}
+
+export async function reorderAccounts({
+  token,
+  orderedAccountIds,
+}: {
+  token?: string;
+  orderedAccountIds: string[];
+}) {
+  const response = await fetch(`${env.BACKEND_URL}/account/order`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: token || "" },
+    body: JSON.stringify({ orderedAccountIds }),
+  });
+  if (!response.ok) throw new Error("Failed to reorder accounts");
 }

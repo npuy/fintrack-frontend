@@ -2,6 +2,8 @@ export interface Category {
   id: string;
   name: string;
   userId: string;
+  enabled: boolean;
+  sortOrder: number;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -107,6 +107,30 @@ export async function editCategory({
   });
 }
 
+export async function toggleCategory({
+  token,
+  categoryId,
+  name,
+  enabled,
+}: {
+  token?: string;
+  categoryId: string;
+  name: string;
+  enabled: boolean;
+}) {
+  const response = await fetch(`${env.BACKEND_URL}/category/${categoryId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token || "",
+    },
+    body: JSON.stringify({ name, enabled }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to toggle category");
+  }
+}
+
 export async function deleteCategory({
   token,
   categoryId,
@@ -121,6 +145,21 @@ export async function deleteCategory({
       Authorization: token || "",
     },
   });
+}
+
+export async function reorderCategories({
+  token,
+  orderedCategoryIds,
+}: {
+  token?: string;
+  orderedCategoryIds: string[];
+}) {
+  const response = await fetch(`${env.BACKEND_URL}/category/order`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: token || "" },
+    body: JSON.stringify({ orderedCategoryIds }),
+  });
+  if (!response.ok) throw new Error("Failed to reorder categories");
 }
 
 export function getQueryParamsFromFormData({
