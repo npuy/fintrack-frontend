@@ -15,9 +15,6 @@ jobs:
       SSH_PATH: /home/deployer/fintrack-frontend
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Install cloudflared
         run: |
           curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 \
@@ -44,18 +41,10 @@ jobs:
 
           chmod 600 ~/.ssh/config
 
-      - name: Sync source to server
-        run: |
-          rsync -avz --delete \
-            --exclude='node_modules' \
-            --exclude='build' \
-            --exclude='.git' \
-            --exclude='.env' \
-            ./ ssh.nicolaspereira.me:$SSH_PATH/
-
-      - name: Deploy with Docker Compose
+      - name: Deploy
         run: |
           ssh ssh.nicolaspereira.me << 'EOF'
             cd /home/deployer/fintrack-frontend
+            git pull
             docker compose up --build -d
           EOF
