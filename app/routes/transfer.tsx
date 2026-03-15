@@ -80,8 +80,8 @@ export async function loader({ request }: ActionFunctionArgs) {
   const categories = await getCategories({ token });
 
   return {
-    accounts,
-    categories,
+    accounts: accounts.filter((account) => account.enabled),
+    categories: categories.filter((category) => category.enabled),
   };
 }
 
