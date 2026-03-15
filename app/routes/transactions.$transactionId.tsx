@@ -93,8 +93,8 @@ export async function loader({ request, params }: ActionFunctionArgs) {
   }
   return {
     transaction,
-    accounts,
-    categories,
+    accounts: accounts.filter((account) => account.enabled),
+    categories: categories.filter((category) => category.enabled),
     typeSelectData,
   };
 }
