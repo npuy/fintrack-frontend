@@ -18,3 +18,13 @@ export function formatYYYYMMDDToDDMMYYYY(dateString: string): string {
   const [year, month, day] = dateString.split("-");
   return `${day}/${month}/${year}`;
 }
+
+/**
+ * Converts a `YYYY-MM-DDT...` string into Date object
+ */
+export function parseYYYYMMDDToDate(dateString: string): Date {
+  dateString = dateString.split("T")[0]; // Remove time part if present
+  const [year, month, day] = dateString.split("-").map((s) => Number(s));
+  const monthIndex = month - 1;
+  return new Date(year, monthIndex, day);
+}
