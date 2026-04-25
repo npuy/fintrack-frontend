@@ -1,14 +1,13 @@
 import { Flex, NumberInput, Select, Space, TextInput } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { ReactNode } from "react";
 import { action, loader } from "~/routes/transactions.$transactionId";
-import { toDateValue } from "~/utils/forms";
+import { ClientDateInput } from "./ClientDateInput";
 
 interface LoadData {
   description?: string;
   amount?: number;
-  date?: Date;
+  date?: string;
   account: string | null;
   category: string | null;
   type: string | null;
@@ -50,12 +49,9 @@ export function FormTransaction({
         defaultValue={actionData?.values.amount ?? loadData.amount}
         error={actionData?.errors.amount}
       />
-      <DateInput
-        key={loadData.date?.toISOString() ?? "empty-date"}
-        label="Date"
-        name="date"
-        valueFormat="YYYY/MM/DD"
-        defaultValue={toDateValue(actionData?.values.date) ?? loadData.date}
+      <ClientDateInput
+        date={loadData.date}
+        submittedDate={actionData?.values.date}
         error={actionData?.errors.date}
       />
       <Select

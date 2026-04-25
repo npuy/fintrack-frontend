@@ -4,7 +4,6 @@ import { FormTransaction } from "./FormTransaction";
 
 export default function NewTransaction() {
   const loadData = {
-    date: new Date(),
     account: null,
     category: null,
     type: null,
