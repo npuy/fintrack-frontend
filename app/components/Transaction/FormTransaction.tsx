@@ -8,7 +8,7 @@ import { toDateValue } from "~/utils/forms";
 interface LoadData {
   description?: string;
   amount?: number;
-  date: Date;
+  date?: Date;
   account: string | null;
   category: string | null;
   type: string | null;
@@ -51,6 +51,7 @@ export function FormTransaction({
         error={actionData?.errors.amount}
       />
       <DateInput
+        key={loadData.date?.toISOString() ?? "empty-date"}
         label="Date"
         name="date"
         valueFormat="YYYY/MM/DD"
