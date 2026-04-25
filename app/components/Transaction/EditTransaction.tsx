@@ -4,6 +4,7 @@ import { loader } from "~/routes/transactions.$transactionId";
 import DeleteButton from "../Buttons/DeleteButton";
 import EditButton from "../Buttons/EditButton";
 import { FormTransaction } from "./FormTransaction";
+import { parseYYYYMMDDToDate } from "~/utils/dates";
 
 export default function EditTransaction() {
   const data = useLoaderData<typeof loader>();
@@ -11,7 +12,7 @@ export default function EditTransaction() {
   const loadData = {
     description: data.transaction.description,
     amount: data.transaction.amount,
-    date: new Date(data.transaction.date),
+    date: parseYYYYMMDDToDate(data.transaction.date),
     account: data.transaction.accountId,
     category: data.transaction.categoryId,
     type: data.transaction.type.toString(),
