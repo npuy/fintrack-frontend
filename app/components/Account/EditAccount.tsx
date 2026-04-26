@@ -19,12 +19,11 @@ export default function EditAccount() {
         <Title order={1}>Edit Account</Title>
         <Space h="md" />
         <FormAccount loadData={loadData}>
-          <Form method="post" action="delete">
-            <DeleteButton />
-          </Form>
+          <DeleteButton form="delete-account-form" />
           <Space w="md" />
           <EditButton />
         </FormAccount>
+        <Form id="delete-account-form" method="post" action="delete" />
       </Fieldset>
     </Container>
   );
