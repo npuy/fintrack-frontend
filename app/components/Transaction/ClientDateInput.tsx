@@ -8,16 +8,6 @@ interface ClientDateInputProps {
   error?: string[];
 }
 
-function toClientDateValue(value?: string): Date | null {
-  if (!value) return null;
-
-  const date = /^\d{4}-\d{2}-\d{2}/.test(value)
-    ? parseYYYYMMDDToDate(value)
-    : new Date(value);
-
-  return isNaN(date.getTime()) ? null : date;
-}
-
 export function ClientDateInput({
   date,
   submittedDate,
@@ -26,6 +16,16 @@ export function ClientDateInput({
   const [dateValue, setDateValue] = useState<Date | null>(null);
 
   useEffect(() => {
+    function toClientDateValue(value?: string): Date | null {
+      if (!value) return null;
+
+      const date = /^\d{4}-\d{2}-\d{2}/.test(value)
+        ? parseYYYYMMDDToDate(value)
+        : new Date(value);
+
+      return isNaN(date.getTime()) ? null : date;
+    }
+
     setDateValue(
       toClientDateValue(submittedDate) ?? toClientDateValue(date) ?? new Date(),
     );
