@@ -18,12 +18,11 @@ export default function EditCategory() {
         <Title order={1}>Edit Category</Title>
         <Space h="md" />
         <FormCategory loadData={loadData}>
-          <Form method="post" action="delete">
-            <DeleteButton />
-          </Form>
+          <DeleteButton form="delete-category-form" />
           <Space w="md" />
           <EditButton />
         </FormCategory>
+        <Form id="delete-category-form" method="post" action="delete" />
       </Fieldset>
     </Container>
   );

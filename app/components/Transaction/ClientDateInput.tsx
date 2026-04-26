@@ -8,7 +8,7 @@ interface ClientDateInputProps {
   error?: string[];
 }
 
-function toDateValue(value?: string): Date | null {
+function toClientDateValue(value?: string): Date | null {
   if (!value) return null;
 
   const date = /^\d{4}-\d{2}-\d{2}/.test(value)
@@ -23,23 +23,31 @@ export function ClientDateInput({
   submittedDate,
   error,
 }: ClientDateInputProps) {
-  const [hydrated, setHydrated] = useState(false);
+  const [dateValue, setDateValue] = useState<Date | null>(null);
 
   useEffect(() => {
-    setHydrated(true);
-  }, []);
+    setDateValue(
+      toClientDateValue(submittedDate) ?? toClientDateValue(date) ?? new Date(),
+    );
+  }, [date, submittedDate]);
 
-  if (!hydrated) return null;
-
-  const defaultValue =
-    toDateValue(submittedDate) ?? toDateValue(date) ?? new Date();
+  if (!dateValue)
+    return (
+      <DateInput
+        label="Date"
+        name="date"
+        valueFormat="YYYY/MM/DD"
+        error={error}
+      />
+    );
 
   return (
     <DateInput
       label="Date"
       name="date"
       valueFormat="YYYY/MM/DD"
-      defaultValue={defaultValue}
+      value={dateValue}
+      onChange={setDateValue}
       error={error}
     />
   );

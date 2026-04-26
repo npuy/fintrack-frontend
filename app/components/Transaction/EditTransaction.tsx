@@ -24,12 +24,11 @@ export default function EditTransaction() {
         <Title order={1}>Edit Transaction</Title>
         <Space h="md" />
         <FormTransaction loadData={loadData}>
-          <Form method="post" action="delete">
-            <DeleteButton />
-          </Form>
+          <DeleteButton form="delete-transaction-form" />
           <Space w="md" />
           <EditButton />
         </FormTransaction>
+        <Form id="delete-transaction-form" method="post" action="delete" />
       </Fieldset>
     </Container>
   );

@@ -22,12 +22,11 @@ export function EditBudgetGroup() {
         <Title order={1}>Edit Budget Group</Title>
         <Space h="md" />
         <FormBudgetGroup loadData={loadData}>
-          <Form method="post" action="delete">
-            <DeleteButton />
-          </Form>
+          <DeleteButton form="delete-budget-group-form" />
           <Space w="md" />
           <EditButton />
         </FormBudgetGroup>
+        <Form id="delete-budget-group-form" method="post" action="delete" />
       </Fieldset>
     </Container>
   );
