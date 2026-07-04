@@ -8,6 +8,12 @@ interface ClientDateInputProps {
   error?: string[];
 }
 
+const today = new Date();
+// Default to current date if no date is provided
+const defaultDate = `${today.getFullYear()}-${
+  today.getMonth() + 1
+}-${today.getDate()}`;
+
 export function ClientDateInput({
   date,
   submittedDate,
@@ -26,9 +32,7 @@ export function ClientDateInput({
       return isNaN(date.getTime()) ? null : date;
     }
 
-    setDateValue(
-      toClientDateValue(submittedDate) ?? toClientDateValue(date) ?? new Date(),
-    );
+    setDateValue(toClientDateValue(submittedDate ?? date ?? defaultDate));
   }, [date, submittedDate]);
 
   if (!dateValue)
