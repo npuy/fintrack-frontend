@@ -12,6 +12,10 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+# tzdata is required for the TZ env var to resolve to a real zone.
+# Without it Alpine silently falls back to UTC.
+RUN apk add --no-cache tzdata
+
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 

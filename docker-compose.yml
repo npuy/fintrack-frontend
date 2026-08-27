@@ -6,5 +6,10 @@ services:
     # env_file sets container-level env vars so remix-serve sees PORT at startup.
     # The volume mount makes the same file available for process.loadEnvFile().
     env_file: ./.env
+    # Dates rendered during SSR use the process's local time (e.g. the default
+    # date in FormTransfer). Keep this in sync with the backend's TZ.
+    # Override by setting TZ in ./.env.
+    environment:
+      - TZ=${TZ:-America/Montevideo}
     volumes:
       - ./.env:/app/.env:ro
